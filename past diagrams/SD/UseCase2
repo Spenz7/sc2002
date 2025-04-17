@@ -1,0 +1,62 @@
+sequenceDiagram
+    title HDB Officer Project Registration Process
+    participant Officer as HDB Officer
+    participant AuthC as AuthController
+    participant RegC as OfficerRegistrationController
+    participant Manager as HDBManager
+    participant Proj as BTOProject
+
+    activate Officer
+    Officer->>AuthC: login("T9876543B", "password")
+    activate AuthC
+    AuthC-->>Officer: Authentication success
+    deactivate AuthC
+
+    Officer->>RegC: registerForProject(targetProject)
+    activate RegC
+    RegC->>Officer: checkCurrentApplications()
+    Officer-->>RegC: existingApplications
+
+    alt Has existing application for targetProject
+        RegC-->>Officer: Error("Cannot handle project you applied for")
+    else Not handling any conflicting project
+        RegC->>Proj: checkApplicationPeriod()
+        activate Proj
+        Proj-->>RegC: periodActive
+        deactivate Proj
+
+        RegC->>Manager: submitRegistrationRequest(Officer, targetProject)
+        activate Manager
+        Manager->>Proj: checkOfficerSlots()
+        activate Proj
+        Proj-->>Manager: availableSlots
+        deactivate Proj
+
+        alt Slots available
+            Manager->>Proj: assignOfficer(Officer)
+            activate Proj
+            Proj->>Officer: addToManagedProjects()
+            Officer-->>Proj: confirmation
+            deactivate Proj
+
+            Manager->>RegC: updateRegistrationStatus(APPROVED)
+            RegC->>Officer: setRegistrationStatus(APPROVED)
+            Officer-->>RegC: statusUpdated
+
+            Manager-->>RegC: approvalNotification
+            RegC-->>Officer: "Registration approved"
+        else No slots left
+            Manager->>RegC: updateRegistrationStatus(REJECTED)
+            RegC-->>Officer: "No available slots"
+        end
+        deactivate Manager
+    end
+    deactivate RegC
+
+    Officer->>RegC: viewRegistrationStatus()
+    activate RegC
+    RegC->>Officer: getCurrentStatus()
+    Officer-->>RegC: currentStatus
+    RegC-->>Officer: displayStatus()
+    deactivate RegC
+    deactivate Officer
