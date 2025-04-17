@@ -3,3 +3,25 @@ store past mermaid.js code for diagrams here, include:
 - title the file name appropriately eg V1 which stands for version 1 and V2 and so on
 
 NOTE: new diagrams should be based off prev versions, eg V3 is based off V2, and V2 is based off V1
+
+Latest V5:
+SOLID Principles in the Updated Diagram:
+Single Responsibility Principle (SRP):
+
+FlatBooking, Enquiry, BookingController, ProjectController, OfficerRegistrationController, EnquiryController, and AuthController demonstrate SRP by handling only specific tasks.
+
+Open/Closed Principle (OCP):
+
+The Application class uses state classes to allow new status behaviors (e.g., Pending, Successful).
+
+Liskov Substitution Principle (LSP):
+
+The User class is an abstract class that can be replaced by its subclasses like Applicant and HDBOfficer without affecting the functionality.
+
+Interface Segregation Principle (ISP):
+
+The FilterController handles filtering behavior separately, showing ISP by providing specialized methods that other controllers don't need to worry about.
+
+Dependency Inversion Principle (DIP):
+
+AuthController, ApplicationController, and BookingController depend on abstractions (User, Application), not concrete classes.
