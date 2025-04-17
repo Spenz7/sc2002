@@ -1,3 +1,5 @@
 store past mermaid.js code for diagrams here, include:
 - details under commit msg
 - title the file name appropriately eg V1 which stands for version 1 and V2 and so on
+
+NOTE: new diagrams should be based off prev versions, eg V3 is based off V2, and V2 is based off V1
