@@ -1,1 +1,3 @@
-store past mermaid.js code for diagrams here, better to include details under commit msg and title the file name appropriately eg V1 which stands for version 1 and V2 and so on
+store past mermaid.js code for diagrams here, include:
+- details under commit msg
+- title the file name appropriately eg V1 which stands for version 1 and V2 and so on
