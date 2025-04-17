@@ -1,0 +1,159 @@
+classDiagram
+    %% Main User Classes
+    class User {
+        <<Abstract>>
+        -String nric
+        -String password
+        -int age
+        -MaritalStatus maritalStatus
+        +login()
+        +changePassword(newPassword: String)
+        +viewProfile()
+    }
+
+    class Applicant {
+        +applyForProject(project: BTOProject)
+        +viewAppliedProjects()
+        +submitEnquiry(project: BTOProject, message: String)
+        +withdrawApplication(application: Application)
+        +editEnquiry(enquiry: Enquiry, newMessage: String)
+        +deleteEnquiry(enquiry: Enquiry)
+    }
+
+    class HDBOfficer {
+        -List~BTOProject~ managedProjects
+        +registerForProject(project: BTOProject)
+        +viewRegistrationStatus()
+        +updateFlatAvailability(project: BTOProject, flatType: FlatType, quantity: int)
+        +processFlatBooking(application: Application, flatType: FlatType)
+        +generateReceipt(booking: FlatBooking)
+        +replyToEnquiry(enquiry: Enquiry, response: String)
+    }
+
+    class HDBManager {
+        
+        +approveOfficerRegistration(officer: HDBOfficer, project: BTOProject)
+        +approveApplication(application: Application)
+        +generateReport(filters: Map~String, Object~)
+        +filterProjects(filters: Map~String, Object~): List~BTOProject~
+        +getProjectsForApplicant(applicant: Applicant): List~BTOProject~
+    }
+
+
+        class ProjectManager {
+        -createdProjects: List~BTOProject~
+        +createProject(name: String, neighborhood: String, units: Map~FlatType, Integer~, openingDate: Date, closingDate: Date)
+        +editProject(project: BTOProject, newDetails: Map~String, Object~)
+        +deleteProject(project: BTOProject)
+        +toggleProjectVisibility(project: BTOProject)
+    }
+
+    %%Relationships
+
+    HDBManager --|> ProjectManager
+
+
+    %% Inheritance
+    User <|-- Applicant
+    User <|-- HDBOfficer
+    User <|-- HDBManager
+
+    %% Project Related Classes
+    class BTOProject {
+        -String projectName
+        -String neighborhood
+        -Map~FlatType, Integer~ availableUnits
+        -Date openingDate
+        -Date closingDate
+        -boolean isVisible
+        -List~HDBOfficer~ assignedOfficers
+        +getAvailableFlats(flatType: FlatType): int
+        +decrementFlatCount(flatType: FlatType)
+        +isApplicationPeriodActive(): boolean
+    }
+
+    class Application {
+        -ApplicationStatus status
+        -Date applicationDate
+        -BTOProject project
+        -Applicant applicant
+        +updateStatus(newStatus: ApplicationStatus)
+        +requestWithdrawal()
+    }
+
+    class FlatBooking {
+        -String receiptNumber
+        -Date bookingDate
+        -FlatType flatType
+        +generateReceiptDetails(): String
+    }
+
+    class Enquiry {
+        -String content
+        -String response
+        -Date timestamp
+        +getFormattedEnquiry(): String
+    }
+
+    class Report {
+        -List~FlatBooking~ bookings
+        +filterByMaritalStatus(status: MaritalStatus)
+        +filterByFlatType(type: FlatType)
+        +generateReportFile()
+    }
+
+    %% Enumeration Classes
+    class MaritalStatus {
+        <<Enumeration>>
+        SINGLE
+        MARRIED
+    }
+
+    class FlatType {
+        <<Enumeration>>
+        TWO_ROOM
+        THREE_ROOM
+    }
+
+    class ApplicationStatus {
+        <<Enumeration>>
+        PENDING
+        SUCCESSFUL
+        UNSUCCESSFUL
+        BOOKED
+        WITHDRAWN
+    }
+
+    %% Controller Classes (Boundary)
+    class AuthController {
+        +authenticateUser(nric: String, password: String): User
+        +changePassword(user: User, newPassword: String)
+    }
+
+
+    class ApplicationController {
+        +submitApplication(applicant: Applicant, project: BTOProject): Application
+        +processWithdrawal(application: Application)
+    }
+
+    %% Relationships
+    Applicant "1" *-- "*" Application : submits
+    BTOProject "1" *-- "*" Application : contains
+    HDBOfficer "1" *-- "*" BTOProject : manages
+    HDBManager "1" *-- "*" BTOProject : creates
+    ProjectManager "1" *-- "*" BTOProject : creates
+    Application "1" *-- "1" FlatBooking : results in
+    Applicant "1" *-- "*" Enquiry : creates
+    BTOProject "1" *-- "*" Enquiry : has
+    HDBManager "1" *-- "*" Report : generates
+    HDBOfficer --> Application : processes
+    HDBManager --> Application : approves/rejects
+    HDBManager --> HDBOfficer : approves
+    HDBManager --> BTOProject : Views
+    AuthController --> User : authenticates
+
+    %% Notes for OO Principles
+    note for User "Encapsulation: Private fields with public access methods"
+    note for Applicant "Inheritance: Extends from user class"
+    note for BTOProject "Composition:Contains multiple Applications and Enquiries"
+    note for ProjectManager "Single Responsibility:Handles project-related operations"
