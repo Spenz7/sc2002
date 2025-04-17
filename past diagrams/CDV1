@@ -1,0 +1,118 @@
+classDiagram
+direction TB
+    class Applicant {
+	    -userID: string
+	    -password: string
+	    -age: int
+	    -userGroup: boolean
+	    +viewOpenProject()
+	    +applyProject()
+	    +viewApplicationStatus()
+	    +requestWithdrawal()
+	    +submitEnquiry(enquiry: string)
+    }
+
+    class Project {
+	    -visibility: boolean
+	    -projectName: string
+	    -neighborhood: string
+	    -flatTypes: list
+	    -numberOfUnits: map
+	    -applicationOpenDate: date
+	    -applicationCloseDate: date
+	    -managerInCharge: HDBManager
+	    -availableOfficerSlots: int(max 10)
+	    +toggleVisibility(status: boolean)
+    }
+
+    class Application {
+	    -status: string
+    }
+
+    class Enquiry {
+	    -question: string
+	    +editEnquiry(updatedMessage: string)
+	    +delEnquiry()
+	    +viewEnquiry()
+    }
+
+    class HDBOfficer {
+	    -assignedProject: boolean
+	    +viewApplications()
+	    +registerforProject(ProjectId: string)
+	    +viewRegistrationStatus()
+	    +generateReceipt(applicantNRIC: string)
+	    +bookFlat(applicantNRIC: string)
+    }
+
+    class Registration {
+	    -officerNRIC: string
+	    -projectID: string
+	    -status: string
+    }
+
+    class Flat {
+	    -flatType: string
+	    -booked: boolean
+	    -applicantNRIC: string
+	    +bookFlat(applicantNRIC: string)
+	    +isBooked(status: boolean)
+    }
+
+    class OfficerEnquiry {
+	    +replyEnquiry(response: string)
+    }
+
+    class OfficerProject {
+	    -remainingFlats: int
+	    +updateNoOfFlatsLeft(numberLeft: int)
+    }
+
+    class HDBManager {
+	    -managerID: string
+	    -password: string
+	    +createProject()
+	    +editProject()
+	    +deleteProject()
+	    +toggleProjectVisibility(status: boolean)
+	    +viewCreatedProjects()
+	    +filterProjects()
+	    +viewOfficerRegistrations()
+	    +approveOfficerRegistration()
+	    +rejectOfficerRegistration()
+	    +approveApplication()
+	    +rejectApplication()
+	    +approveWithdrawal()
+	    +rejectWithdrawal()
+	    +generateApplicantReport(filter: string)
+	    +viewAllEnquiries()
+	    +replyToEnquiry(enquiryID: string, response: string)
+    }
+
+    class Receipt {
+	    -applicantName: string
+	    -applicantNRIC: string
+	    -age: int
+	    -maritalStatus: string
+	    -flatType: string
+	    -projectID: string
+	    +printReceipt()
+    }
+
+    Applicant "1" --o "0..*" Enquiry : enquire
+    Applicant "0..1" --> "1" Project : apply
+    Applicant "0..*" --> "1" Application
+    Applicant --|> HDBOfficer
+    Enquiry "1" --|> "1" OfficerEnquiry
+    Flat "0..*" --o "1" OfficerProject
+    HDBOfficer "1" --> "1" Receipt
+    HDBOfficer "1" --> "1" Registration
+    HDBOfficer "1" --> "0..*" Flat
+    HDBOfficer "1..*" --> "1" OfficerProject
+    HDBOfficer "1" --> "1" OfficerEnquiry
+    OfficerEnquiry "1" --* "1" Application
+    Project "1" --* "0..*" Enquiry
+    Project "1" --> "0..*" Flat
+    Project "1..*" --> "1" HDBManager
+    Project "1" --o "0..*"Application
+    Project "1" --|> "1" OfficerProject
