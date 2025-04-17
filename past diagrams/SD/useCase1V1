@@ -1,0 +1,84 @@
+sequenceDiagram
+    title HDB Officer Applying for BTO (Applicant Role)
+
+    %% Continuous lifeline for Officer
+    participant Officer as HDB Officer (Applicant Role)
+    participant AuthC as AuthController
+    participant FilterC as FilterController
+    participant AppC as ApplicationController
+    participant App as Application
+    participant Proj as BTOProject
+    participant Manager as HDBManager
+
+    %% ===== Authentication =====
+    activate Officer
+    Officer->>AuthC: login("S1234567A", "password")
+    activate AuthC
+    AuthC-->>Officer: Authentication success
+    deactivate AuthC
+    
+    %% ===== Project Browsing =====
+    Officer->>FilterC: viewEligibleProjects()
+    activate FilterC
+    FilterC->>Proj: filterByMaritalStatus(SINGLE/MARRIED)
+    activate Proj
+    Proj-->>FilterC: filteredProjects
+    deactivate Proj
+    FilterC->>Proj: filterByVisibility(true)
+    activate Proj
+    Proj-->>FilterC: visibleProjects
+    deactivate Proj
+    FilterC-->>Officer: Display eligible projects
+    deactivate FilterC
+    
+    %% ===== Application Process =====
+    Officer->>AppC: applyForProject(selectedProject)
+    activate AppC
+    alt Age < 35 and SINGLE applying for 3-Room
+        AppC-->>Officer: Error("Singles under 35 can only apply for 2-Room")
+    else Valid application
+        AppC->>App: new Application(selectedProject, PENDING)
+        activate App
+        AppC->>Proj: decrementAvailableSlots(flatType)
+        activate Proj
+        Proj-->>AppC: slotsUpdated
+        deactivate Proj
+        App->>Manager: notifyNewApplication()
+        activate Manager
+        Manager-->>App: acknowledgement
+        deactivate Manager
+        App-->>AppC: applicationCreated
+        deactivate App
+        AppC-->>Officer: Success("Application submitted")
+    end
+    deactivate AppC
+    
+    %% ===== Application Status Check =====
+    Officer->>AppC: checkApplicationStatus()
+    activate AppC
+    AppC->>App: getStatus()
+    activate App
+    alt Status is SUCCESSFUL
+        App-->>AppC: SUCCESSFUL
+        AppC-->>Officer: "Ready for flat booking"
+    else Status is PENDING
+        App-->>AppC: PENDING
+        AppC-->>Officer: "Application under review"
+    end
+    deactivate App
+    deactivate AppC
+    
+    %% ===== Withdrawal Scenario =====
+    Officer->>AppC: requestWithdrawal()
+    activate AppC
+    AppC->>App: updateStatus(WITHDRAWN)
+    activate App
+    App->>Proj: incrementAvailableSlots(flatType)
+    activate Proj
+    Proj-->>App: slotsUpdated
+    deactivate Proj
+    App-->>AppC: statusUpdated
+    deactivate App
+    AppC-->>Officer: "Withdrawal processed"
+    deactivate AppC
+    deactivate Officer
