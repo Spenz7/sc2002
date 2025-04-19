@@ -1,0 +1,30 @@
+src/
+├── models/
+│   ├── Applicant.java
+│   ├── HDBOfficer.java
+│   ├── Manager.java
+│   ├── BTOProject.java
+│   ├── Enquiry.java
+│   ├── Application.java
+│   └── enums/
+│       ├── FlatType.java
+│       ├── ApplicationStatus.java
+│       ├── RegistrationStatus.java
+│       └── MaritalStatus.java
+├── controllers/
+│   ├── AuthController.java
+│   ├── ApplicationController.java
+│   ├── EnquiryController.java
+│   ├── ProjectController.java
+│   ├── ManagerController.java
+│   └── OfficerRegistrationController.java
+├── utils/
+│   ├── DataLoader.java
+│   ├── FileUtils.java
+│   └── PasswordUtils.java
+├── views/
+│   └── ConsoleUI.java
+└── tests/
+    ├── AuthControllerTest.java
+    ├── ApplicationControllerTest.java
+    ├── ProjectControllerTest.java
