@@ -1,23 +1,33 @@
 package models;
 
+import models.enums.FlatType;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class BTOProject {
     // Attributes
     private String name;
     private String neighborhood;
-    private String flatType;  // Example: "3-room", "4-room", etc.
+    private String flatType; // Example: "3-room", "4-room", etc.
     private int unitCount;
     private double price;
-    private boolean visibility;  // Indicates if the project is visible to applicants
+    private boolean visibility;
+    private Map<FlatType, Integer> availableUnits; // Map for flat type and available units
 
     // Constructor
-    public BTOProject(String name, String neighborhood, String flatType, int unitCount, double price, boolean visibility) {
-        this.name = name;
-        this.neighborhood = neighborhood;
-        this.flatType = flatType;
-        this.unitCount = unitCount;
-        this.price = price;
-        this.visibility = visibility;
+    public BTOProject(String name, String neighborhood, FlatType flatType, int unitCount, double price, boolean visibility) {
+    this.name = name;
+    this.neighborhood = neighborhood;
+    this.flatType = flatType.getDisplayName(); // Convert to the display name for readability
+    this.unitCount = unitCount;
+    this.price = price;
+    this.visibility = visibility;
+    this.availableUnits = new HashMap<>();
+    // Populate the map with the initial unit count
+    this.availableUnits.put(flatType, unitCount);
     }
+
 
     // Getters and Setters
     public String getName() {
@@ -74,7 +84,12 @@ public class BTOProject {
             unitCount--;
             return true;
         }
-        return false;  // No units available
+        return false; // No units available
+    }
+
+    // Method: Get Available Flats
+    public int getAvailableFlats(FlatType flatType) {
+        return availableUnits.getOrDefault(flatType, 0); // Returns unit count for given flat type
     }
 
     // Override toString for Displaying Project Information
@@ -89,10 +104,4 @@ public class BTOProject {
                 ", visibility=" + visibility +
                 '}';
     }
-
-    public int getAvailableFlats(FlatType flatType) {
-    // Example implementation: returns the count of available units for the given flat type
-    return availableUnits.getOrDefault(flatType, 0);
-    }
-
 }

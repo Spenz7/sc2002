@@ -16,4 +16,14 @@ public enum FlatType {
     public String getDisplayName() {
         return displayName;
     }
+    
+    // Make sure this method is inside the enum body!
+    public static FlatType fromString(String flatType) {
+        for (FlatType type : FlatType.values()) {
+            if (type.getDisplayName().equalsIgnoreCase(flatType)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Invalid flat type: " + flatType);
+    }
 }
