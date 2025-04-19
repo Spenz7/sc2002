@@ -1,39 +1,95 @@
-package code;
+package models;
 
-public class Applicant{
-    private String userID,password;
+import java.util.regex.Pattern;
+
+public class Applicant {
+    // Attributes
+    private String name;
+    private String nric;
     private int age;
-    private boolean userGroup; //true if married, false if not
+    private String maritalStatus;
+    private String password;
 
-    public void viewOpenProject() {
-        //if age >35, single, only 2 rooms
-        //if married, 21 and above, return all
-        //elif return none
-
-        if (userGroup || age >= 21 ) {
-            System.out.println("Project: " + Project.getprojectname());
-    }
-    public void applyProject(){
-        //apply to either
+    // Constructor
+    public Applicant(String name, String nric, int age, String maritalStatus, String password) {
+        this.name = name;
+        this.nric = nric;
+        this.age = age;
+        this.maritalStatus = maritalStatus;
+        this.password = password;
     }
 
-    public void viewApplicationStatus(){
-        //return pending/successful/unsuccessful, after hdb manager
+    // Getters and Setters
+    public String getName() {
+        return name;
     }
 
-    public void requestWithdrawal(){
-
-
-
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void submitEnquiry(String enquiry){
-
-
+    public String getNric() {
+        return nric;
     }
 
+    public void setNric(String nric) {
+        this.nric = nric;
+    }
 
+    public int getAge() {
+        return age;
+    }
 
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    // Method: Validate NRIC Format
+    public boolean isValidNric() {
+        // Simple regex for NRIC validation
+        String nricRegex = "^[STFG]\\d{7}[A-Z]$";
+        return Pattern.matches(nricRegex, this.nric);
+    }
+
+    // Method: Check Password
+    public boolean checkPassword(String inputPassword) {
+        return this.password.equals(inputPassword);
+    }
+
+    // Method: Change Password
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    // Method: Validate Age for Application Eligibility
+    public boolean isEligibleForApplication() {
+        return maritalStatus.equalsIgnoreCase("Single") && age >= 35;
+    }
+
+    // Override toString for Displaying Applicant Information
+    @Override
+    public String toString() {
+        return "Applicant{" +
+                "name='" + name + '\'' +
+                ", nric='" + nric + '\'' +
+                ", age=" + age +
+                ", maritalStatus='" + maritalStatus + '\'' +
+                '}';
+    }
 }
-
-
