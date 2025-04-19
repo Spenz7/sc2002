@@ -3,6 +3,10 @@ import models.enums.FlatType;
 import models.enums.ApplicationStatus;
 import models.enums.RegistrationStatus;
 import models.enums.MaritalStatus;
+import models.Applicant;
+import models.HDBOfficer;
+import models.HDBManager;
+import models.BTOProject;
 
 import controllers.*;
 import views.ConsoleUI;

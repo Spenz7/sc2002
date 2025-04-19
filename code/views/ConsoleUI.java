@@ -6,6 +6,8 @@ import controllers.EnquiryController;
 import controllers.ProjectController;
 import controllers.ManagerController;
 import controllers.OfficerRegistrationController;
+import models.Application;
+import models.Enquiry;
 import models.Applicant;
 import models.HDBOfficer;
 import models.HDBManager;

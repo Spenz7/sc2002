@@ -89,4 +89,10 @@ public class BTOProject {
                 ", visibility=" + visibility +
                 '}';
     }
+
+    public int getAvailableFlats(FlatType flatType) {
+    // Example implementation: returns the count of available units for the given flat type
+    return availableUnits.getOrDefault(flatType, 0);
+    }
+
 }

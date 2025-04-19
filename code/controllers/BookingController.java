@@ -2,6 +2,7 @@ package controllers;
 
 import models.Application;
 import models.FlatBooking;
+import models.enums.ApplicationStatus;
 import models.enums.FlatType;
 
 public class BookingController {
