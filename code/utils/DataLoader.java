@@ -1,6 +1,9 @@
 package utils;
 
-import models.Applicant;
+import models.HDBOfficer;
+import models.HDBManager;
+import models.BTOProject;
+import enums.FlatType;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,40 +12,80 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataLoader {
-    // Method to load applicant data from a CSV file
-    public List<Applicant> loadApplicants(String filePath) {
-        List<Applicant> applicants = new ArrayList<>();
 
+    // Load officers from CSV
+    public List<HDBOfficer> loadOfficers(String filePath) {
+        List<HDBOfficer> officers = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            boolean isHeader = true; // To skip the header row
-            
+            boolean isHeader = true;
             while ((line = br.readLine()) != null) {
-                // Skip the header line
                 if (isHeader) {
                     isHeader = false;
                     continue;
                 }
-
-                // Split the line by commas (CSV format)
                 String[] data = line.split(",");
-
-                // Parse the fields into variables
                 String name = data[0].trim();
                 String nric = data[1].trim();
                 int age = Integer.parseInt(data[2].trim());
                 String maritalStatus = data[3].trim();
                 String password = data[4].trim();
-
-                // Create an Applicant object and add it to the list
-                applicants.add(new Applicant(name, nric, age, maritalStatus, password));
+                officers.add(new HDBOfficer(name, nric, age, maritalStatus, password));
             }
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-        } catch (NumberFormatException e) {
-            System.err.println("Error parsing data: " + e.getMessage());
+            System.err.println("Error reading officer file: " + e.getMessage());
         }
+        return officers;
+    }
 
-        return applicants;
+    // Load managers from CSV
+    public List<HDBManager> loadManagers(String filePath) {
+        List<HDBManager> managers = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            boolean isHeader = true;
+            while ((line = br.readLine()) != null) {
+                if (isHeader) {
+                    isHeader = false;
+                    continue;
+                }
+                String[] data = line.split(",");
+                String name = data[0].trim();
+                String nric = data[1].trim();
+                int age = Integer.parseInt(data[2].trim());
+                String maritalStatus = data[3].trim();
+                String password = data[4].trim();
+                managers.add(new HDBManager(name, nric, age, maritalStatus, password));
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading manager file: " + e.getMessage());
+        }
+        return managers;
+    }
+
+    // Load BTO projects from CSV
+    public List<BTOProject> loadProjects(String filePath) {
+        List<BTOProject> projects = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            boolean isHeader = true;
+            while ((line = br.readLine()) != null) {
+                if (isHeader) {
+                    isHeader = false;
+                    continue;
+                }
+                String[] data = line.split(",");
+                String name = data[0].trim();
+                String neighborhood = data[1].trim();
+                String flatType = data[2].trim();
+                int availableUnits = Integer.parseInt(data[3].trim());
+                double price = Double.parseDouble(data[4].trim());
+                boolean visibility = Boolean.parseBoolean(data[5].trim());
+                projects.add(new BTOProject(name, neighborhood, flatType, availableUnits, price, visibility));
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading project file: " + e.getMessage());
+        }
+        return projects;
     }
 }
