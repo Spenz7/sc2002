@@ -2,10 +2,10 @@ tests folder is optional
 
 src/
 ├── data/
-│   ├── ApplicantList.csv       // Contains applicant data (Name, NRIC, Age, Marital Status, Password)
-│   ├── OfficerList.csv         // Contains HDB officer data
-│   ├── ManagerList.csv         // Contains manager data
-│   ├── BTOProjectList.csv      // Contains BTO project data
+│   ├── ApplicantList.csv
+│   ├── OfficerList.csv
+│   ├── ManagerList.csv
+│   ├── BTOProjectList.csv
 ├── models/
 │   ├── Applicant.java
 │   ├── HDBOfficer.java
@@ -13,6 +13,7 @@ src/
 │   ├── BTOProject.java
 │   ├── Enquiry.java
 │   ├── Application.java
+│   ├── FlatBooking.java       // Newly added
 │   └── enums/
 │       ├── FlatType.java
 │       ├── ApplicationStatus.java
@@ -24,13 +25,14 @@ src/
 │   ├── EnquiryController.java
 │   ├── ProjectController.java
 │   ├── ManagerController.java
-│   └── OfficerRegistrationController.java
+│   ├── OfficerRegistrationController.java
+│   ├── FilterController.java  // Newly added
 ├── utils/
-│   ├── DataLoader.java         // Handles CSV file reading
-│   ├── FileUtils.java          // General file-handling utilities
-│   └── PasswordUtils.java      // Handles password security features
+│   ├── DataLoader.java
+│   ├── FileUtils.java
+│   └── PasswordUtils.java
 ├── views/
-│   └── ConsoleUI.java          // For CLI interactions
+│   └── ConsoleUI.java
 └── tests/
     ├── controllers/
     │   ├── AuthControllerTest.java
