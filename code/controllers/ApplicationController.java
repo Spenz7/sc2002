@@ -1,7 +1,7 @@
 package controllers;
 
 import models.Application;
-import enums.ApplicationStatus;
+import models.enums.ApplicationStatus;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,7 +10,7 @@ import models.Applicant;
 import models.HDBOfficer;
 import models.HDBManager;
 import models.BTOProject;
-import enums.ApplicationStatus;
+import models.enums.ApplicationStatus;
 
 import java.util.List;
 import java.util.Scanner;

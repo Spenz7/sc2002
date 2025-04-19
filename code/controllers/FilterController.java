@@ -1,7 +1,7 @@
 package controllers;
 
 import models.BTOProject;
-import enums.FlatType;
+import models.enums.FlatType;
 
 import java.util.ArrayList;
 import java.util.List;

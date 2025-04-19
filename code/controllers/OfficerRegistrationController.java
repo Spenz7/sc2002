@@ -1,7 +1,7 @@
 package controllers;
 
 import models.HDBOfficer;
-import enums.RegistrationStatus;
+import models.enums.RegistrationStatus;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package models;
 
-import enums.FlatType;
+import models.enums.FlatType;
 
 import java.util.Date;
 import java.util.UUID;

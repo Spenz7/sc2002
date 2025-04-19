@@ -1,6 +1,6 @@
 package models;
 
-import enums.ApplicationStatus;
+import models.enums.ApplicationStatus;
 
 public class Application {
     // Attributes

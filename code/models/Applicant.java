@@ -1,5 +1,5 @@
 package models;
-
+import models.enums.MaritalStatus;
 import java.util.regex.Pattern;
 
 public class Applicant {

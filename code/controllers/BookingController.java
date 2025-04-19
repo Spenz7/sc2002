@@ -2,7 +2,7 @@ package controllers;
 
 import models.Application;
 import models.FlatBooking;
-import enums.FlatType;
+import models.enums.FlatType;
 
 public class BookingController {
     // Books a flat and generates a receipt
