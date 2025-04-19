@@ -13,7 +13,7 @@ src/
 │   ├── BTOProject.java
 │   ├── Enquiry.java
 │   ├── Application.java
-│   ├── FlatBooking.java       // Newly added
+│   ├── FlatBooking.java 
 │   └── enums/
 │       ├── FlatType.java
 │       ├── ApplicationStatus.java
@@ -22,11 +22,12 @@ src/
 ├── controllers/
 │   ├── AuthController.java
 │   ├── ApplicationController.java
+│   ├── BookingController.java
 │   ├── EnquiryController.java
 │   ├── ProjectController.java
 │   ├── ManagerController.java
 │   ├── OfficerRegistrationController.java
-│   ├── FilterController.java  // Newly added
+│   ├── FilterController.java
 ├── utils/
 │   ├── DataLoader.java
 │   ├── FileUtils.java
