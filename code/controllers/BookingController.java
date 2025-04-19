@@ -9,14 +9,14 @@ public class BookingController {
     // Books a flat and generates a receipt
     public FlatBooking bookFlat(Application application, FlatType flatType) {
         // Check if the application is eligible for booking
-        if (application.getStatus() != enums.ApplicationStatus.SUCCESSFUL) {
+        if (application.getStatus() != ApplicationStatus.SUCCESSFUL) {
             System.out.println("Application is not in a successful state for booking.");
             return null;
         }
 
         // Create a new FlatBooking and associate it with the application
         FlatBooking booking = new FlatBooking(flatType);
-        application.updateStatus(enums.ApplicationStatus.BOOKED);
+        application.updateStatus(ApplicationStatus.BOOKED);
         System.out.println("Flat booked successfully. Receipt: " + booking.getReceiptNumber());
         return booking;
     }

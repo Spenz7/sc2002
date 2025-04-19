@@ -2,7 +2,8 @@ package models.enums;
 
 public enum ApplicationStatus {
     PENDING,
-    APPROVED,
-    REJECTED,
+    SUCCESSFUL,
+    UNSUCCESSFUL,
+    BOOKED,
     WITHDRAWN;
 }
