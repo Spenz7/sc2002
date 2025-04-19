@@ -1,3 +1,5 @@
+tests folder is optional
+
 src/
 ├── data/
 │   ├── ApplicantList.csv       // Contains applicant data (Name, NRIC, Age, Marital Status, Password)
@@ -30,6 +32,12 @@ src/
 ├── views/
 │   └── ConsoleUI.java          // For CLI interactions
 └── tests/
-    ├── AuthControllerTest.java
-    ├── ApplicationControllerTest.java
-    ├── ProjectControllerTest.java
+    ├── controllers/
+    │   ├── AuthControllerTest.java
+    │   ├── ApplicationControllerTest.java
+    │   └── ProjectControllerTest.java
+    └── models/
+        ├── ApplicantTest.java
+        ├── HDBOfficerTest.java
+        ├── HDBManagerTest.java
+        └── BTOProjectTest.java
