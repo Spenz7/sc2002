@@ -1,0 +1,4 @@
+── utils/
+│   ├── DataLoader.java         // Reads CSV files and loads data into models
+│   ├── FileUtils.java          // File handling helper functions
+│   └── PasswordUtils.java      // Password hashing/validation utilities
