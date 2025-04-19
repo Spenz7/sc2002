@@ -1,4 +1,9 @@
 src/
+├── data/
+│   ├── ApplicantList.csv       // Contains applicant data (Name, NRIC, Age, Marital Status, Password)
+│   ├── OfficerList.csv         // Contains HDB officer data
+│   ├── ManagerList.csv         // Contains manager data
+│   ├── BTOProjectList.csv      // Contains BTO project data
 ├── models/
 │   ├── Applicant.java
 │   ├── HDBOfficer.java
@@ -19,11 +24,11 @@ src/
 │   ├── ManagerController.java
 │   └── OfficerRegistrationController.java
 ├── utils/
-│   ├── DataLoader.java
-│   ├── FileUtils.java
-│   └── PasswordUtils.java
+│   ├── DataLoader.java         // Handles CSV file reading
+│   ├── FileUtils.java          // General file-handling utilities
+│   └── PasswordUtils.java      // Handles password security features
 ├── views/
-│   └── ConsoleUI.java
+│   └── ConsoleUI.java          // For CLI interactions
 └── tests/
     ├── AuthControllerTest.java
     ├── ApplicationControllerTest.java
