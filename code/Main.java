@@ -1,5 +1,9 @@
 import utils.DataLoader;
-import models.*;
+import models.enums.FlatType;
+import models.enums.ApplicationStatus;
+import models.enums.RegistrationStatus;
+import models.enums.MaritalStatus;
+
 import controllers.*;
 import views.ConsoleUI;
 
