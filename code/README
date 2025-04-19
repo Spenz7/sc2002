@@ -7,7 +7,7 @@ src/
 ├── models/
 │   ├── Applicant.java
 │   ├── HDBOfficer.java
-│   ├── Manager.java
+│   ├── HDBManager.java
 │   ├── BTOProject.java
 │   ├── Enquiry.java
 │   ├── Application.java
