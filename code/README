@@ -1,6 +1,7 @@
 tests folder is optional
 
 src/
+├── Main.java
 ├── data/
 │   ├── ApplicantList.csv
 │   ├── OfficerList.csv
