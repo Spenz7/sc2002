@@ -97,42 +97,17 @@ public class ConsoleUI {
     }
 
     private void applicantMenu(Scanner scanner, Applicant applicant) {
-        boolean shouldContinue = true;
+        // Create the ApplicantUI instance
+        ApplicantUI applicantUI = new ApplicantUI(
+            scanner,
+            applicant,
+            applicationController,
+            enquiryController
+        );
         
-        while (shouldContinue) {
-            System.out.println("\nApplicant Dashboard:");
-            System.out.println("1. View Applications");
-            System.out.println("2. Submit Enquiry");
-            System.out.println("3. Change Password");
-            System.out.println("4.  Logout");
-    
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline
-    
-            switch (choice) {
-                case 1 -> {
-                    List<Application> applications = applicationController.getApplicationsByApplicant(applicant.getNric());
-                    System.out.println("\nYour Applications:");
-                    applications.forEach(System.out::println);
-                }
-                case 2 -> {
-                    System.out.print("Enter project name for enquiry: ");
-                    String projectName = scanner.nextLine();
-                    System.out.print("Enter your enquiry message: ");
-                    String message = scanner.nextLine();
-                    Enquiry enquiry = new Enquiry(0, applicant.getNric(), projectName, message, "Pending");
-                    enquiryController.createEnquiry(enquiry);
-                    System.out.println("Enquiry submitted successfully!");
-                }
-                case 4 -> {
-                    System.out.println("Logging out...");
-                    shouldContinue = false;  // This will exit the loop
-                }
-                default -> System.out.println("Invalid option. Please try again.");
-            }
-        }
+        // Delegate to the ApplicantUI
+        applicantUI.showMenu();
     }
-
     
     // Officer-specific menu
     private void officerMenu(Scanner scanner, HDBOfficer officer) {
