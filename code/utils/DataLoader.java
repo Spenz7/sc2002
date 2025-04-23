@@ -103,7 +103,7 @@ public class DataLoader {
                 String[] data = line.split(",");
                 String name = data[0].trim();
                 String neighborhood = data[1].trim();
-                FlatType flatType = FlatType.fromString(data[2].trim()); // Convert string to FlatType
+                int flatType = Integer.parseInt(data[2].trim()); // Convert string to FlatType
                 int unitCount = Integer.parseInt(data[3].trim());
                 double price = Double.parseDouble(data[4].trim());
                 boolean visibility = Boolean.parseBoolean(data[5].trim());

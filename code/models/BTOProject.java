@@ -9,23 +9,23 @@ public class BTOProject {
     // Attributes
     private String name;
     private String neighborhood;
-    private String flatType; // Example: "3-room", "4-room", etc.
+    private int flatType; //2 room or 3 room
     private int unitCount;
     private double price;
     private boolean visibility;
-    private Map<FlatType, Integer> availableUnits; // Map for flat type and available units
+    private Map<Integer, Integer> availableUnits; // Map for flat type and available units
 
     // Constructor
-    public BTOProject(String name, String neighborhood, FlatType flatType, int unitCount, double price, boolean visibility) {
-    this.name = name;
-    this.neighborhood = neighborhood;
-    this.flatType = flatType.getDisplayName(); // Convert to the display name for readability
-    this.unitCount = unitCount;
-    this.price = price;
-    this.visibility = visibility;
-    this.availableUnits = new HashMap<>();
-    // Populate the map with the initial unit count
-    this.availableUnits.put(flatType, unitCount);
+    public BTOProject(String name, String neighborhood, int flatType, int unitCount, double price, boolean visibility) {
+        this.name = name;
+        this.neighborhood = neighborhood;
+        this.flatType = flatType; // This remains as an integer (2 or 3)
+        this.unitCount = unitCount;
+        this.price = price;
+        this.visibility = visibility;
+        this.availableUnits = new HashMap<>();
+        // Populate the map with the flat type as key and unit count as value
+        this.availableUnits.put(flatType, unitCount);
     }
 
 
@@ -46,11 +46,11 @@ public class BTOProject {
         this.neighborhood = neighborhood;
     }
 
-    public String getFlatType() {
+    public int getFlatType() {
         return flatType;
     }
 
-    public void setFlatType(String flatType) {
+    public void setFlatType(int flatType) {
         this.flatType = flatType;
     }
 

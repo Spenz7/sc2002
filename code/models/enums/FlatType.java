@@ -27,3 +27,5 @@ public enum FlatType {
         throw new IllegalArgumentException("Invalid flat type: " + flatType);
     }
 }
+
+//either 2 room or 3 room flat

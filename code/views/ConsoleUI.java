@@ -102,7 +102,9 @@ public class ConsoleUI {
             scanner,
             applicant,
             applicationController,
-            enquiryController
+            enquiryController,
+            projectController
+
         );
         
         // Delegate to the ApplicantUI

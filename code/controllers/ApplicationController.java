@@ -14,9 +14,16 @@ public class ApplicationController {
     }
 
     // Adds a new application to the list
-    public void createApplication(Application application) {
+    public boolean createApplication(Application application) {
         applications.add(application);
         System.out.println("Application successfully created for project: " + application.getProjectName());
+        return true;
+    }
+
+    public boolean hasExistingApplication(String applicantNric) {
+        return applications.stream()
+            .anyMatch(app -> app.getApplicantNric().equals(applicantNric) 
+                && app.getStatus() != ApplicationStatus.WITHDRAWN);
     }
 
     // Updates the status of an existing application

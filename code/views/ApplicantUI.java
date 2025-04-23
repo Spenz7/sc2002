@@ -2,9 +2,12 @@ package views;
 
 import controllers.ApplicationController;
 import controllers.EnquiryController;
+import controllers.ProjectController;
 import models.Applicant;
 import models.Application;
 import models.Enquiry;
+import models.BTOProject;
+import models.enums.ApplicationStatus;
 
 import java.util.List;
 import java.util.Scanner;
@@ -14,14 +17,17 @@ public class ApplicantUI {
     private final Applicant applicant;
     private final ApplicationController applicationController;
     private final EnquiryController enquiryController;
+    private final ProjectController projectController;
 
     public ApplicantUI(Scanner scanner, Applicant applicant, 
-                      ApplicationController applicationController, 
-                      EnquiryController enquiryController) {
+                     ApplicationController applicationController,
+                     EnquiryController enquiryController,
+                     ProjectController projectController) {
         this.scanner = scanner;
         this.applicant = applicant;
         this.applicationController = applicationController;
         this.enquiryController = enquiryController;
+        this.projectController = projectController;
     }
 
     public void showMenu() {
@@ -29,19 +35,23 @@ public class ApplicantUI {
         
         while (shouldContinue) {
             System.out.println("\nApplicant Dashboard:");
-            System.out.println("1. View Applications");
-            System.out.println("2. Manage Enquiries");
-            System.out.println("3. Change Password");
-            System.out.println("4. Logout");
+            System.out.println("1. View Available Projects");
+            System.out.println("2. Apply for Project");
+            System.out.println("3. View My Applications");
+            System.out.println("4. Manage Enquiries");
+            System.out.println("5. Change Password");
+            System.out.println("6. Logout");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline
 
             switch (choice) {
-                case 1 -> viewApplications();
-                case 2 -> manageEnquiries();
-                case 4 -> {
+                case 1 -> viewAvailableProjects();
+                case 2 -> applyForProject();
+                case 3 -> viewApplications();
+                case 4 -> manageEnquiries();
+                case 6 -> {
                     System.out.println("Logging out...");
                     shouldContinue = false;
                 }
@@ -50,11 +60,83 @@ public class ApplicantUI {
         }
     }
 
+    //project applications
+
+    private void viewAvailableProjects() {
+        List<BTOProject> projects = projectController.getVisibleProjects();
+        System.out.println("\nAvailable Projects:");
+        for (int i = 0; i < projects.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, projects.get(i));
+        }
+    }
+
+    private void applyForProject() {
+        // Show available projects
+        List<BTOProject> projects = projectController.getVisibleProjects();
+        viewAvailableProjects();
+
+        System.out.print("\nEnter project number to apply (0 to cancel): ");
+        int projectChoice = scanner.nextInt();
+        scanner.nextLine();
+
+        if (projectChoice == 0) {
+            return;
+        }
+
+        if (projectChoice < 1 || projectChoice > projects.size()) {
+            System.out.println("Invalid project selection.");
+            return;
+        }
+
+        BTOProject selectedProject = projects.get(projectChoice - 1);
+
+        // Check eligibility
+        if (!isEligibleForProject(selectedProject)) {
+            System.out.println("You are not eligible for this project.");
+            return;
+        }
+
+        // Check if already applied
+        if (applicationController.hasExistingApplication(applicant.getNric())) {
+            System.out.println("You already have an active application.");
+            return;
+        }
+
+        // Create application
+        Application application = new Application(
+            0, // Auto-generated ID
+            applicant.getNric(),
+            selectedProject.getName(),
+            ApplicationStatus.PENDING
+        );
+
+        if (applicationController.createApplication(application)) {
+            System.out.println("Application submitted successfully!");
+        } else {
+            System.out.println("Failed to submit application.");
+        }
+    }
+
+    private boolean isEligibleForProject(BTOProject project) {
+        // Check age and marital status requirements
+        if (applicant.getMaritalStatus().equals("Single")) {
+            return applicant.getAge() >= 35 && project.getFlatType() == 2;
+        } else if (applicant.getMaritalStatus().equals("Married")) {
+            return applicant.getAge() >= 21;
+        }
+        return false;
+    }
+
+    
+
+
     private void viewApplications() {
         List<Application> applications = applicationController.getApplicationsByApplicant(applicant.getNric());
         System.out.println("\nYour Applications:");
         applications.forEach(System.out::println);
     }
+
+    //enquiries
 
     private void manageEnquiries() {
         boolean backToDashboard = false;
