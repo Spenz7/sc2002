@@ -19,10 +19,10 @@ public class Main {
         DataLoader dataLoader = new DataLoader();
 
         // Load data for Applicants, Officers, Managers, and Projects
-        List<Applicant> applicants = dataLoader.loadApplicants("data/ApplicantList.csv");
-        List<HDBOfficer> officers = dataLoader.loadOfficers("data/OfficerList.csv");
-        List<HDBManager> managers = dataLoader.loadManagers("data/ManagerList.csv");
-        List<BTOProject> projects = dataLoader.loadProjects("data/BTOProjectList.csv");
+        List<Applicant> applicants = dataLoader.loadApplicants("code/data/ApplicantList.csv");
+        List<HDBOfficer> officers = dataLoader.loadOfficers("code/data/OfficerList.csv");
+        List<HDBManager> managers = dataLoader.loadManagers("code/data/ManagerList.csv");
+        List<BTOProject> projects = dataLoader.loadProjects("code/data/BTOProjectList.csv");
 
         // Initialize the Controllers
         AuthController authController = new AuthController(applicants, officers, managers);

@@ -96,78 +96,101 @@ public class ConsoleUI {
         }
     }
 
-    // Applicant-specific menu
     private void applicantMenu(Scanner scanner, Applicant applicant) {
-        System.out.println("\nApplicant Dashboard:");
-        System.out.println("1. View Applications");
-        System.out.println("2. Submit Enquiry");
-        System.out.println("3. Logout");
-
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline
-
-        switch (choice) {
-            case 1 -> {
-                List<Application> applications = applicationController.getApplicationsByApplicant(applicant.getNric());
-                System.out.println("\nYour Applications:");
-                applications.forEach(System.out::println);
+        boolean shouldContinue = true;
+        
+        while (shouldContinue) {
+            System.out.println("\nApplicant Dashboard:");
+            System.out.println("1. View Applications");
+            System.out.println("2. Submit Enquiry");
+            System.out.println("3. Change Password");
+            System.out.println("4.  Logout");
+    
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline
+    
+            switch (choice) {
+                case 1 -> {
+                    List<Application> applications = applicationController.getApplicationsByApplicant(applicant.getNric());
+                    System.out.println("\nYour Applications:");
+                    applications.forEach(System.out::println);
+                }
+                case 2 -> {
+                    System.out.print("Enter project name for enquiry: ");
+                    String projectName = scanner.nextLine();
+                    System.out.print("Enter your enquiry message: ");
+                    String message = scanner.nextLine();
+                    Enquiry enquiry = new Enquiry(0, applicant.getNric(), projectName, message, "Pending");
+                    enquiryController.createEnquiry(enquiry);
+                    System.out.println("Enquiry submitted successfully!");
+                }
+                case 4 -> {
+                    System.out.println("Logging out...");
+                    shouldContinue = false;  // This will exit the loop
+                }
+                default -> System.out.println("Invalid option. Please try again.");
             }
-            case 2 -> {
-                System.out.print("Enter project name for enquiry: ");
-                String projectName = scanner.nextLine();
-                System.out.print("Enter your enquiry message: ");
-                String message = scanner.nextLine();
-                Enquiry enquiry = new Enquiry(0, applicant.getNric(), projectName, message, "Pending");
-                enquiryController.createEnquiry(enquiry);
-                System.out.println("Enquiry submitted successfully!");
-            }
-            case 3 -> System.out.println("Logging out...");
-            default -> System.out.println("Invalid option. Returning to dashboard.");
         }
     }
 
+    
     // Officer-specific menu
     private void officerMenu(Scanner scanner, HDBOfficer officer) {
-        System.out.println("\nOfficer Dashboard:");
-        System.out.println("1. View Enquiries");
-        System.out.println("2. Logout");
+        boolean shouldContinue = true;
 
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline
+        while (shouldContinue){
+            System.out.println("\nOfficer Dashboard:");
+            System.out.println("1. View Enquiries");
+            System.out.println("2. Logout");
+    
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline
+    
+            switch (choice) {
+                case 1 -> {
+                    System.out.print("Enter project name to view enquiries: ");
+                    String projectName = scanner.nextLine();
+                    List<Enquiry> enquiries = enquiryController.getEnquiriesByProject(projectName);
+                    System.out.println("\nEnquiries:");
+                    enquiries.forEach(System.out::println);
+                }
+                case 2 -> {
+                    System.out.println("Logging out...");
+                    shouldContinue = false;  // This will exit the loop
+                }
 
-        switch (choice) {
-            case 1 -> {
-                System.out.print("Enter project name to view enquiries: ");
-                String projectName = scanner.nextLine();
-                List<Enquiry> enquiries = enquiryController.getEnquiriesByProject(projectName);
-                System.out.println("\nEnquiries:");
-                enquiries.forEach(System.out::println);
+                default -> System.out.println("Invalid option. Returning to dashboard.");
             }
-            case 2 -> System.out.println("Logging out...");
-            default -> System.out.println("Invalid option. Returning to dashboard.");
         }
     }
 
     // Manager-specific menu
     private void managerMenu(Scanner scanner, HDBManager manager) {
-        System.out.println("\nManager Dashboard:");
-        System.out.println("1. Manage Officer Registrations");
-        System.out.println("2. Logout");
+        boolean shouldContinue = true;
 
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline
-
-        switch (choice) {
-            case 1 -> {
-                System.out.print("Enter officer NRIC to handle registration: ");
-                String officerNric = scanner.nextLine();
-                System.out.print("Approve registration? (true/false): ");
-                boolean approve = scanner.nextBoolean();
-                scanner.nextLine(); // Consume the newline
-                managerController.handleOfficerRegistration(officerNric, approve);
+        while (shouldContinue){
+            System.out.println("\nManager Dashboard:");
+            System.out.println("1. Manage Officer Registrations");
+            System.out.println("2. Logout");
+    
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline
+    
+            switch (choice) {
+                case 1 -> {
+                    System.out.print("Enter officer NRIC to handle registration: ");
+                    String officerNric = scanner.nextLine();
+                    System.out.print("Approve registration? (true/false): ");
+                    boolean approve = scanner.nextBoolean();
+                    scanner.nextLine(); // Consume the newline
+                    managerController.handleOfficerRegistration(officerNric, approve);
+                }
+                case 2 -> {
+                    System.out.println("Logging out...");
+                    shouldContinue = false;  // This will exit the loop
+                }
+                default -> System.out.println("Invalid option. Returning to dashboard.");
             }
-            case 2 -> System.out.println("Logging out...");
-            default -> System.out.println("Invalid option. Returning to dashboard.");
         }
     }
 
