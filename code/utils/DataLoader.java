@@ -16,6 +16,9 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class DataLoader {
 
@@ -140,4 +143,40 @@ public class DataLoader {
         }
         return projects;
     }
+    // Update officer's password in CSV
+    public static void updateOfficerPasswordInCsv(HDBOfficer officer, String filePath) {
+        try {
+            List<String> lines = new ArrayList<>();
+            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+                String line;
+                boolean isHeader = true;
+                while ((line = br.readLine()) != null) {
+                    if (isHeader) {
+                        isHeader = false;
+                        lines.add(line); // Add the header line as is
+                        continue;
+                    }
+                    String[] data = line.split(",");
+                    if (data[1].trim().equals(officer.getNric())) {
+                        // Update password for matching NRIC
+                        data[4] = officer.getPassword();
+                        lines.add(String.join(",", data));
+                    } else {
+                        lines.add(line);
+                    }
+                }
+            }
+
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+                for (String updatedLine : lines) {
+                    bw.write(updatedLine);
+                    bw.newLine();
+                }
+            }
+            System.out.println("Password updated in CSV for officer: " + officer.getNric());
+        } catch (IOException e) {
+            System.err.println("Error updating officer password in file: " + e.getMessage());
+        }
+    }
+
 }

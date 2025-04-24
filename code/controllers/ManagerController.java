@@ -4,6 +4,7 @@ import models.Application;
 import models.BTOProject;
 import models.HDBOfficer;
 import models.enums.ApplicationStatus;
+import models.enums.FlatType;
 
 import java.util.List;
 
@@ -27,26 +28,29 @@ public class ManagerController {
         return false;
     }
 
+    // Approves an application for a project
     public boolean approveApplication(Application application, BTOProject project) {
-    // Check flat availability
-        int flatType = application.getFlatType(); // Assuming this exists
+        // Retrieve the flat type as an int and convert to FlatType
+        int flatTypeInt = application.getFlatType(); // Assuming getFlatType() returns an int
+        FlatType flatType = FlatType.values()[flatTypeInt]; // Convert int to FlatType enum
+
+        // Check flat availability
         int availableFlats = project.getAvailableFlats(flatType);
-    
         if (availableFlats <= 0) {
-            return false;
+            return false; // No flats available
         }
-    
-    // Update project flat count
-        if (flatType.equalsIgnoreCase(project.getType1())) {
+
+        // Update project flat count
+        if (flatType.getDisplayName().equalsIgnoreCase(project.getType1())) {
             project.setUnitsType1(project.getUnitsType1() - 1);
-        } else if (flatType.equalsIgnoreCase(project.getType2())) {
+        } else if (flatType.getDisplayName().equalsIgnoreCase(project.getType2())) {
             project.setUnitsType2(project.getUnitsType2() - 1);
         }
-    
-    // Update application status
-        application.setStatus(ApplicationStatus.APPROVED);
+
+        // Update application status
+        application.setStatus(ApplicationStatus.SUCCESSFUL); // Ensure SUCCESSFUL exists in ApplicationStatus
         return true;
-    }   
+    }
 
     // Retrieves a list of all officers
     public List<HDBOfficer> getAllOfficers() {

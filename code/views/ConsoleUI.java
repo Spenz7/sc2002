@@ -1,5 +1,8 @@
 package views;
 
+import views.HDBManagerUI;
+import views.HDBOfficerUI;
+import views.ApplicantUI;
 import controllers.AuthController;
 import controllers.ApplicationController;
 import controllers.EnquiryController;

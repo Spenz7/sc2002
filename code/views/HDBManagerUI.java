@@ -70,7 +70,7 @@ public class HDBManagerUI {
                 case 4 -> toggleProjectVisibility();
                 case 5 -> approveOfficerRegistrations();
                 case 6 -> approveApplications();
-                case 7 -> approveWithdrawalRequests();
+                //case 7 -> approveWithdrawalRequests();
                 case 8 -> generateReports();
                 case 9 -> filterMyProjects();
                 case 10 -> changePassword(scanner);

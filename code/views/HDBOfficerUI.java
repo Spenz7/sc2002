@@ -4,11 +4,11 @@ import controllers.ApplicationController;
 import controllers.EnquiryController;
 import controllers.ProjectController;
 import models.HDBOfficer;
-import models.BTOProject;
-import models.Enquiry;
 
 import java.util.List;
 import java.util.Scanner;
+
+import utils.DataLoader;
 
 public class HDBOfficerUI {
     private final Scanner scanner;
@@ -97,8 +97,9 @@ public class HDBOfficerUI {
         System.out.print("Enter your new password: ");
         String newPassword = scanner.nextLine();
         officer.setPassword(newPassword); // Update in-memory password
-        officerController.updateOfficerInCsv(officer); // Persist change to file
+
+        // Persist password update to a CSV file using a utility class (DataLoader or FileUtils)
+        DataLoader.updateOfficerPasswordInCsv(officer, "data/OfficerList.csv"); 
         System.out.println("Password changed successfully.");
     }
-
 }
