@@ -1,106 +1,178 @@
 package models;
 
 import models.enums.FlatType;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
+import java.util.List;
 
 public class BTOProject {
-    // Attributes
     private String name;
     private String neighborhood;
-    private int flatType; //2 room or 3 room
-    private int unitCount;
-    private double price;
-    private boolean visibility;
-    private Map<Integer, Integer> availableUnits; // Map for flat type and available units
+    private String type1;     // E.g., "2-Room"
+    private int unitsType1;   // Number of units available for type1
+    private double priceType1;// Selling price for type1
+    private String type2;     // E.g., "3-Room"
+    private int unitsType2;   // Number of units available for type2
+    private double priceType2;// Selling price for type2
+    private Date openingDate; // Application opening date
+    private Date closingDate; // Application closing date
+    private String manager;   // Manager for the project
+    private int officerSlot;  // Number of officer slots available
+    private List<String> officers; // List of officers assigned to the project
+    
+    // We'll add a visibility property—even if not in your CSV—to support the old UI requirements.
+    private boolean visibility = true; // default to visible
 
-    // Constructor
-    public BTOProject(String name, String neighborhood, int flatType, int unitCount, double price, boolean visibility) {
+    public BTOProject(String name, String neighborhood, String type1, int unitsType1, double priceType1,
+                      String type2, int unitsType2, double priceType2, Date openingDate, Date closingDate,
+                      String manager, int officerSlot, String[] officers) {
         this.name = name;
         this.neighborhood = neighborhood;
-        this.flatType = flatType; // This remains as an integer (2 or 3)
-        this.unitCount = unitCount;
-        this.price = price;
-        this.visibility = visibility;
-        this.availableUnits = new HashMap<>();
-        // Populate the map with the flat type as key and unit count as value
-        this.availableUnits.put(flatType, unitCount);
+        this.type1 = type1;
+        this.unitsType1 = unitsType1;
+        this.priceType1 = priceType1;
+        this.type2 = type2;
+        this.unitsType2 = unitsType2;
+        this.priceType2 = priceType2;
+        this.openingDate = openingDate;
+        this.closingDate = closingDate;
+        this.manager = manager;
+        this.officerSlot = officerSlot;
+        this.officers = List.of(officers); // Converts an array to a List
     }
-
-
-    // Getters and Setters
+    
+    // Getters and setters for new properties
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getNeighborhood() {
         return neighborhood;
     }
-
-    public void setNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
+    
+    public String getType1() {
+        return type1;
     }
-
-    public int getFlatType() {
-        return flatType;
+    
+    public void setType1(String type1) {
+        this.type1 = type1;
     }
-
-    public void setFlatType(int flatType) {
-        this.flatType = flatType;
+    
+    public int getUnitsType1() {
+        return unitsType1;
     }
-
-    public int getUnitCount() {
-        return unitCount;
+    
+    public void setUnitsType1(int unitsType1) {
+        this.unitsType1 = unitsType1;
     }
-
-    public void setUnitCount(int unitCount) {
-        this.unitCount = unitCount;
+    
+    public double getPriceType1() {
+        return priceType1;
     }
-
-    public double getPrice() {
-        return price;
+    
+    public void setPriceType1(double priceType1) {
+        this.priceType1 = priceType1;
     }
-
-    public void setPrice(double price) {
-        this.price = price;
+    
+    public String getType2() {
+        return type2;
     }
+    
+    public void setType2(String type2) {
+        this.type2 = type2;
+    }
+    
+    public int getUnitsType2() {
+        return unitsType2;
+    }
+    
+    public void setUnitsType2(int unitsType2) {
+        this.unitsType2 = unitsType2;
+    }
+    
+    public double getPriceType2() {
+        return priceType2;
+    }
+    
+    public void setPriceType2(double priceType2) {
+        this.priceType2 = priceType2;
+    }
+    
+    public Date getOpeningDate() {
+        return openingDate;
+    }
+    
+    public void setOpeningDate(Date openingDate) {
+        this.openingDate = openingDate;
+    }
+    
+    public Date getClosingDate() {
+        return closingDate;
+    }
+    
+    public void setClosingDate(Date closingDate) {
+        this.closingDate = closingDate;
+    }
+    
+    public String getManager() {
+        return manager;
+    }
+    
+    public int getOfficerSlot() {
+        return officerSlot;
+    }
+    
+    public List<String> getOfficers() {
+        return officers;
+    }
+    
+    // --- Methods to support old functionality ---
 
+    // Visibility methods - used by ProjectController and similar classes.
     public boolean isVisible() {
         return visibility;
     }
-
+    
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
     }
-
-    // Method: Decrement Unit Count
-    public boolean decrementUnits() {
-        if (unitCount > 0) {
-            unitCount--;
-            return true;
-        }
-        return false; // No units available
-    }
-
-    // Method: Get Available Flats
+    
+    // getAvailableFlats: Return available units for the given flat type.
+    // We compare the FlatType's display name to our type1 and type2 strings.
     public int getAvailableFlats(FlatType flatType) {
-        return availableUnits.getOrDefault(flatType, 0); // Returns unit count for given flat type
+        String flatTypeStr = flatType.getDisplayName();
+        if (type1.equalsIgnoreCase(flatTypeStr)) {
+            return unitsType1;
+        } else if (type2.equalsIgnoreCase(flatTypeStr)) {
+            return unitsType2;
+        }
+        return 0;
     }
-
-    // Override toString for Displaying Project Information
+    
+    // getFlatType: For backward compatibility, return '2' if a 2-room option is available.
+    // (This is based on your ApplicantUI check: project.getFlatType() == 2)
+    public int getFlatType() {
+        if (type1.toLowerCase().contains("2") || type2.toLowerCase().contains("2")) {
+            return 2;
+        }
+        return 0; // Return 0 if no 2-room flat is present.
+    }
+    
     @Override
     public String toString() {
         return "BTOProject{" +
                 "name='" + name + '\'' +
                 ", neighborhood='" + neighborhood + '\'' +
-                ", flatType='" + flatType + '\'' +
-                ", unitCount=" + unitCount +
-                ", price=" + price +
+                ", type1='" + type1 + '\'' +
+                ", unitsType1=" + unitsType1 +
+                ", priceType1=" + priceType1 +
+                ", type2='" + type2 + '\'' +
+                ", unitsType2=" + unitsType2 +
+                ", priceType2=" + priceType2 +
+                ", openingDate=" + openingDate +
+                ", closingDate=" + closingDate +
+                ", manager='" + manager + '\'' +
+                ", officerSlot=" + officerSlot +
+                ", officers=" + officers +
                 ", visibility=" + visibility +
                 '}';
     }

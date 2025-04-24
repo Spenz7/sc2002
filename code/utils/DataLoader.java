@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import java.util.Date;
+
+
 public class DataLoader {
 
     // Load applicants from CSV
@@ -103,13 +108,34 @@ public class DataLoader {
                 String[] data = line.split(",");
                 String name = data[0].trim();
                 String neighborhood = data[1].trim();
-                int flatType = Integer.parseInt(data[2].trim()); // Convert string to FlatType
-                int unitCount = Integer.parseInt(data[3].trim());
-                double price = Double.parseDouble(data[4].trim());
-                boolean visibility = Boolean.parseBoolean(data[5].trim());
-                projects.add(new BTOProject(name, neighborhood, flatType, unitCount, price, visibility));
+
+                // Handle multiple flat types
+                String type1 = data[2].trim();
+                int unitsType1 = Integer.parseInt(data[3].trim());
+                double priceType1 = Double.parseDouble(data[4].trim());
+                String type2 = data[5].trim();
+                int unitsType2 = Integer.parseInt(data[6].trim());
+                double priceType2 = Double.parseDouble(data[7].trim());
+
+                // Parse application dates
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                String openingDateString = data[8].trim();
+                String closingDateString = data[9].trim();
+                Date openingDate = dateFormat.parse(openingDateString);
+                Date closingDate = dateFormat.parse(closingDateString);
+
+                // Manager details
+                String manager = data[10].trim();
+
+                // Officer slots and officer list
+                int officerSlot = Integer.parseInt(data[11].trim());
+                String[] officers = data[12].split(";"); // Assuming officers are separated by semicolons
+
+                // Create and add project
+                BTOProject project = new BTOProject(name, neighborhood, type1, unitsType1, priceType1, type2, unitsType2, priceType2, openingDate, closingDate, manager, officerSlot, officers);
+                projects.add(project);
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             System.err.println("Error reading projects file: " + e.getMessage());
         }
         return projects;

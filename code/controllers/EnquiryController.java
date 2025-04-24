@@ -58,4 +58,11 @@ public class EnquiryController {
         }
         return false;
     }
+
+    // Retrieve all enquiries related to a specific project
+    public List<Enquiry> getEnquiriesByProject(String projectName) {
+        return enquiries.stream()
+                .filter(e -> e.getProjectName().equalsIgnoreCase(projectName))
+                .collect(Collectors.toList());
+    }
 }
