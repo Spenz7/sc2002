@@ -1,1 +1,7 @@
 code/**/*.class
+code/Main.class
+code/controllers/ApplicationController.class
+code/controllers/ProjectController.class
+code/models/BTOProject.class
+code/models/enums/ApplicationStatus.class
+code/views/ConsoleUI.class
