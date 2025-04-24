@@ -49,4 +49,30 @@ public class ApplicationController {
         }
         return result; // Returns a list of applications for the given NRIC
     }
+
+    // Helper method: Retrieve an application by its ID
+    public Application getApplicationById(int applicationId) {
+        return applications.stream()
+                .filter(app -> app.getApplicationId() == applicationId)
+                .findFirst()
+                .orElse(null);
+    }
+
+    // Request withdrawal for an existing application
+    public boolean requestWithdrawal(int applicationId) {
+        Application application = getApplicationById(applicationId);
+        if (application == null) {
+            System.out.println("Application ID not found.");
+            return false;
+        }
+
+        if (application.getStatus() == ApplicationStatus.BOOKED) {
+            System.out.println("Cannot withdraw an application after booking.");
+            return false;
+        }
+
+        application.setStatus(ApplicationStatus.WITHDRAWN);
+        System.out.println("Withdrawal request for application ID " + applicationId + " has been processed.");
+        return true;
+    }
 }
