@@ -1,5 +1,8 @@
 package views;
 
+import views.HDBManagerUI;
+import views.HDBOfficerUI;
+import views.ApplicantUI;
 import controllers.AuthController;
 import controllers.ApplicationController;
 import controllers.EnquiryController;
@@ -75,7 +78,7 @@ public class ConsoleUI {
             new ApplicantUI(scanner, applicant, applicationController, enquiryController, projectController).showMenu();
         } else if (user instanceof HDBOfficer officer) {
             System.out.println("Welcome, HDB Officer!");
-            new HDBOfficerUI(scanner, officer, applicationController, enquiryController, projectController).showMenu();
+            new HDBOfficerUI(scanner, officer, officerRegistrationController, enquiryController, projectController).showMenu();
         } else if (user instanceof HDBManager manager) {
             System.out.println("Welcome, HDB Manager!");
             new HDBManagerUI(scanner, manager, managerController, projectController,applicationController).showMenu();

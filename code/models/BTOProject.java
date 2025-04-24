@@ -2,7 +2,9 @@ package models;
 
 import models.enums.FlatType;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BTOProject {
     private String name;
@@ -18,9 +20,8 @@ public class BTOProject {
     private String manager;   // Manager for the project
     private int officerSlot;  // Number of officer slots available
     private List<String> officers; // List of officers assigned to the project
-    
-    // We'll add a visibility property—even if not in your CSV—to support the old UI requirements.
-    private boolean visibility = true; // default to visible
+
+    private boolean visibility = true; // Default to visible
 
     public BTOProject(String name, String neighborhood, String type1, int unitsType1, double priceType1,
                       String type2, int unitsType2, double priceType2, Date openingDate, Date closingDate,
@@ -39,8 +40,11 @@ public class BTOProject {
         this.officerSlot = officerSlot;
         this.officers = List.of(officers); // Converts an array to a List
     }
-    
-    // Getters and setters for new properties
+
+    public String getProjectName() {
+        return name;
+    }
+
     public String getName() {
         return name;
     }
@@ -48,100 +52,103 @@ public class BTOProject {
     public String getNeighborhood() {
         return neighborhood;
     }
-    
+
     public String getType1() {
         return type1;
     }
-    
+
     public void setType1(String type1) {
         this.type1 = type1;
     }
-    
+
     public int getUnitsType1() {
         return unitsType1;
     }
-    
+
     public void setUnitsType1(int unitsType1) {
         this.unitsType1 = unitsType1;
     }
-    
+
     public double getPriceType1() {
         return priceType1;
     }
-    
+
     public void setPriceType1(double priceType1) {
         this.priceType1 = priceType1;
     }
-    
+
     public String getType2() {
         return type2;
     }
-    
+
     public void setType2(String type2) {
         this.type2 = type2;
     }
-    
+
     public int getUnitsType2() {
         return unitsType2;
     }
-    
+
     public void setUnitsType2(int unitsType2) {
         this.unitsType2 = unitsType2;
     }
-    
+
     public double getPriceType2() {
         return priceType2;
     }
-    
+
     public void setPriceType2(double priceType2) {
         this.priceType2 = priceType2;
     }
-    
+
     public Date getOpeningDate() {
         return openingDate;
     }
-    
+
     public void setOpeningDate(Date openingDate) {
         this.openingDate = openingDate;
     }
-    
+
     public Date getClosingDate() {
         return closingDate;
     }
-    
+
     public void setClosingDate(Date closingDate) {
         this.closingDate = closingDate;
     }
-    
+
     public String getManager() {
         return manager;
     }
-    
+
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
+
     public int getOfficerSlot() {
         return officerSlot;
-    }
-    
-    public List<String> getOfficers() {
-        return officers;
     }
 
     public void setOfficerSlot(int officerSlot) {
         this.officerSlot = officerSlot;
     }
-    
-    // --- Methods to support old functionality ---
 
-    // Visibility methods - used by ProjectController and similar classes.
+    public List<String> getOfficers() {
+        return officers;
+    }
+
+    public void setOfficers(List<String> officers) {
+        this.officers = officers;
+    }
+
     public boolean isVisible() {
         return visibility;
     }
-    
+
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
     }
-    
-    // getAvailableFlats: Return available units for the given flat type.
-    // We compare the FlatType's display name to our type1 and type2 strings.
+
     public int getAvailableFlats(FlatType flatType) {
         String flatTypeStr = flatType.getDisplayName();
         if (type1.equalsIgnoreCase(flatTypeStr)) {
@@ -151,16 +158,19 @@ public class BTOProject {
         }
         return 0;
     }
-    
-    // getFlatType: For backward compatibility, return '2' if a 2-room option is available.
-    // (This is based on your ApplicantUI check: project.getFlatType() == 2)
-    public int getFlatType() {
-        if (type1.toLowerCase().contains("2") || type2.toLowerCase().contains("2")) {
-            return 2;
-        }
-        return 0; // Return 0 if no 2-room flat is present.
+
+    public boolean overlaps(BTOProject otherProject) {
+        return !(this.closingDate.before(otherProject.openingDate) || 
+                 this.openingDate.after(otherProject.closingDate));
     }
-    
+
+    public Map<String, Integer> getFlatAvailability() {
+        Map<String, Integer> availability = new HashMap<>();
+        availability.put(type1, unitsType1);
+        availability.put(type2, unitsType2);
+        return availability;
+    }
+
     @Override
     public String toString() {
         return "BTOProject{" +
@@ -179,5 +189,21 @@ public class BTOProject {
                 ", officers=" + officers +
                 ", visibility=" + visibility +
                 '}';
+    }
+
+    public int getFlatType() {
+        if (type1.toLowerCase().contains("2") || type2.toLowerCase().contains("2")) {
+            return 2; // Represents "2-Room"
+        }
+        return 0; // Represents no "2-Room" type
+    }
+
+    public void setFlatType(int flatType) {
+        if (flatType == 2) {
+            this.type1 = "2-Room";
+            this.unitsType1 = 0; // Set to 0 for simplicity, adjust as needed
+        } else {
+            this.type1 = "Unknown"; // Default or error case
+        }
     }
 }

@@ -1,6 +1,8 @@
 package controllers;
 
 import models.Enquiry;
+import models.HDBOfficer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,19 +11,27 @@ public class EnquiryController {
     private List<Enquiry> enquiries = new ArrayList<>();
     private int nextEnquiryId = 1;
 
-    // Create
+    // Create a new enquiry
     public void createEnquiry(String applicantNric, String projectName, String message) {
         Enquiry enquiry = new Enquiry(nextEnquiryId++, applicantNric, projectName, message, "Pending");
         enquiries.add(enquiry);
     }
 
-    // Read
+    // Get enquiries by applicant
     public List<Enquiry> getEnquiriesByApplicant(String applicantNric) {
         return enquiries.stream()
                 .filter(e -> e.getApplicantNric().equals(applicantNric))
                 .collect(Collectors.toList());
     }
 
+    // Get enquiries assigned to an officer
+    public List<Enquiry> getEnquiriesForOfficer(HDBOfficer officer) {
+        return enquiries.stream()
+                .filter(e -> e.getOfficerNric() != null && e.getOfficerNric().equals(officer.getNric()))
+                .collect(Collectors.toList());
+    }
+
+    // Get an enquiry by its ID
     public Enquiry getEnquiryById(int enquiryId) {
         return enquiries.stream()
                 .filter(e -> e.getEnquiryId() == enquiryId)
@@ -29,7 +39,7 @@ public class EnquiryController {
                 .orElse(null);
     }
 
-    // status Update
+    // Update the enquiry message
     public boolean updateEnquiryMessage(int enquiryId, String newMessage) {
         Enquiry enquiry = getEnquiryById(enquiryId);
         if (enquiry != null && enquiry.isPending()) {
@@ -39,7 +49,7 @@ public class EnquiryController {
         return false;
     }
 
-    // Delete
+    // Delete an enquiry
     public boolean deleteEnquiry(int enquiryId) {
         Enquiry enquiry = getEnquiryById(enquiryId);
         if (enquiry != null && enquiry.isPending()) {
@@ -50,10 +60,11 @@ public class EnquiryController {
     }
 
     // Staff-only: Respond to enquiry
-    public boolean respondToEnquiry(int enquiryId, String response) {
-        Enquiry enquiry = getEnquiryById(enquiryId);
+    public boolean replyToEnquiry(HDBOfficer officer, Enquiry enquiry, String response) {
         if (enquiry != null) {
-            enquiry.setStatus("Responded: " + response);
+            enquiry.setReply(response);
+            enquiry.setStatus("Responded");
+            System.out.println("Reply submitted successfully for enquiry ID: " + enquiry.getEnquiryId());
             return true;
         }
         return false;
