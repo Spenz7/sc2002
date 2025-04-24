@@ -36,11 +36,15 @@ public class OfficerController {
                 String[] fields = line.split(",");
                 String nric = fields[0].trim();
                 String name = fields[1].trim();
-                String password = fields[2].trim();
-                officers.add(new HDBOfficer(nric, name, password));
+                int age = Integer.parseInt(fields[2].trim());
+                String maritalStatus = fields[3].trim();
+                String password = fields[4].trim();
+                officers.add(new HDBOfficer(name, nric, age, maritalStatus, password));
             }
         } catch (IOException e) {
             System.err.println("Error loading officer list: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.err.println("Error parsing age: " + e.getMessage());
         }
         return officers;
     }
@@ -49,7 +53,12 @@ public class OfficerController {
     private void saveOfficerListToCsv(List<HDBOfficer> officers) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("data/OfficerList.csv"))) {
             for (HDBOfficer officer : officers) {
-                bw.write(officer.getNric() + "," + officer.getName() + "," + officer.getPassword());
+                bw.write(String.join(",",
+                    officer.getNric(),
+                    officer.getName(),
+                    String.valueOf(officer.getAge()),
+                    officer.getMaritalStatus(),
+                    officer.getPassword()));
                 bw.newLine();
             }
         } catch (IOException e) {

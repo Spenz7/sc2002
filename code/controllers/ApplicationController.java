@@ -5,6 +5,7 @@ import models.enums.ApplicationStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ApplicationController {
     private List<Application> applications; // List to hold all application records
@@ -75,4 +76,21 @@ public class ApplicationController {
         System.out.println("Withdrawal request for application ID " + applicationId + " has been processed.");
         return true;
     }
+
+    public List<Application> getApplicationsByProjectAndStatus(String projectName, ApplicationStatus status) {
+        return applications.stream()
+            .filter(app -> app.getProjectName().equalsIgnoreCase(projectName))
+            .filter(app -> app.getStatus() == status)
+            .collect(Collectors.toList());
+    }
+
+    public List<Application> getApplicationsByStatus(ApplicationStatus status) {
+        return applications.stream()
+            .filter(app -> app.getStatus() == status)
+            .collect(Collectors.toList());
+    }
+
+    //getapplication by project and status?
+
+    
 }

@@ -78,7 +78,7 @@ public class ConsoleUI {
             new HDBOfficerUI(scanner, officer, applicationController, enquiryController, projectController).showMenu();
         } else if (user instanceof HDBManager manager) {
             System.out.println("Welcome, HDB Manager!");
-            new HDBManagerUI(scanner, manager, managerController, projectController).showMenu();
+            new HDBManagerUI(scanner, manager, managerController, projectController,applicationController).showMenu();
         } else {
             System.out.println("Login failed. Please check your credentials.");
         }

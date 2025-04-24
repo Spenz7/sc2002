@@ -124,6 +124,10 @@ public class BTOProject {
     public List<String> getOfficers() {
         return officers;
     }
+
+    public void setOfficerSlot(int officerSlot) {
+        this.officerSlot = officerSlot;
+    }
     
     // --- Methods to support old functionality ---
 

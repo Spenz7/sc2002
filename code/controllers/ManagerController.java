@@ -1,6 +1,9 @@
 package controllers;
 
+import models.Application;
+import models.BTOProject;
 import models.HDBOfficer;
+import models.enums.ApplicationStatus;
 
 import java.util.List;
 
@@ -23,6 +26,27 @@ public class ManagerController {
         System.out.println("Officer '" + officerNric + "' not found.");
         return false;
     }
+
+    public boolean approveApplication(Application application, BTOProject project) {
+    // Check flat availability
+        int flatType = application.getFlatType(); // Assuming this exists
+        int availableFlats = project.getAvailableFlats(flatType);
+    
+        if (availableFlats <= 0) {
+            return false;
+        }
+    
+    // Update project flat count
+        if (flatType.equalsIgnoreCase(project.getType1())) {
+            project.setUnitsType1(project.getUnitsType1() - 1);
+        } else if (flatType.equalsIgnoreCase(project.getType2())) {
+            project.setUnitsType2(project.getUnitsType2() - 1);
+        }
+    
+    // Update application status
+        application.setStatus(ApplicationStatus.APPROVED);
+        return true;
+    }   
 
     // Retrieves a list of all officers
     public List<HDBOfficer> getAllOfficers() {

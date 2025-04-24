@@ -1,24 +1,45 @@
 package views;
 
+import controllers.ApplicationController;
 import controllers.ManagerController;
 import controllers.ProjectController;
 import models.HDBManager;
+import models.enums.ApplicationStatus;
+import models.Application;
 import models.BTOProject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Date;
+
 
 public class HDBManagerUI {
     private final Scanner scanner;
     private final HDBManager manager;
     private final ManagerController managerController;
     private final ProjectController projectController;
+    private final ApplicationController applicationController;
 
-    public HDBManagerUI(Scanner scanner, HDBManager manager, ManagerController managerController, ProjectController projectController) {
+    public HDBManagerUI(Scanner scanner, HDBManager manager, 
+    ManagerController managerController, 
+    ProjectController projectController,
+    ApplicationController applicationController) {
         this.scanner = scanner;
         this.manager = manager;
         this.managerController = managerController;
         this.projectController = projectController;
+        this.applicationController = applicationController;
+    }
+
+    private Date parseDate(String dateStr) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+        } catch (ParseException e) {
+            System.out.println("Invalid date format. Using current date.");
+            return new Date();
+        }
     }
 
     public void showMenu() {
@@ -61,41 +82,355 @@ public class HDBManagerUI {
             }
         }
     }
-
     private void createNewProject() {
-        // Implementation for creating a new project
+        System.out.println("\n=== Create New BTO Project ===");
+        
+        System.out.print("Project Name: ");
+        String name = scanner.nextLine();
+        
+        System.out.print("Neighborhood: ");
+        String neighborhood = scanner.nextLine();
+        
+        System.out.print("Flat Type 1 (e.g., 2-Room): ");
+        String type1 = scanner.nextLine();
+        
+        System.out.print("Units Available for " + type1 + ": ");
+        int unitsType1 = scanner.nextInt();
+        
+        System.out.print("Price for " + type1 + ": ");
+        double priceType1 = scanner.nextDouble();
+        scanner.nextLine(); // Consume newline
+        
+        System.out.print("Flat Type 2 (e.g., 3-Room): ");
+        String type2 = scanner.nextLine();
+        
+        System.out.print("Units Available for " + type2 + ": ");
+        int unitsType2 = scanner.nextInt();
+        
+        System.out.print("Price for " + type2 + ": ");
+        double priceType2 = scanner.nextDouble();
+        scanner.nextLine(); // Consume newline
+        
+        System.out.print("Application Opening Date (YYYY-MM-DD): ");
+        String openingDateStr = scanner.nextLine();
+        Date openingDate = parseDate(openingDateStr);
+        
+        System.out.print("Application Closing Date (YYYY-MM-DD): ");
+        String closingDateStr = scanner.nextLine();
+        Date closingDate = parseDate(closingDateStr);
+        
+        System.out.print("Officer Slots Available: ");
+        int officerSlot = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        
+        BTOProject newProject = new BTOProject(
+            name,
+            neighborhood,
+            type1,
+            unitsType1,
+            priceType1,
+            type2,
+            unitsType2,
+            priceType2,
+            openingDate,
+            closingDate,
+            manager.getNric(), // Manager in charge
+            officerSlot,
+            new String[0] // Empty officers array
+        );
+        
+        projectController.createProject(newProject);
+        System.out.println("Project created successfully!");
     }
-
     private void editProject() {
-        // Implementation for editing an existing project
+        System.out.println("\n=== Edit Project ===");
+        List<BTOProject> myProjects = projectController.getProjectsByManager(manager.getNric());
+        
+        if (myProjects.isEmpty()) {
+            System.out.println("No projects found that you manage.");
+            return;
+        }
+        
+        System.out.println("\nYour Projects:");
+        for (int i = 0; i < myProjects.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, myProjects.get(i).getName());
+        }
+        
+        System.out.print("Select project to edit (0 to cancel): ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        
+        if (choice == 0) return;
+        if (choice < 1 || choice > myProjects.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+        
+        BTOProject project = myProjects.get(choice - 1);
+        
+        System.out.println("\nEditing Project: " + project.getName());
+        System.out.println("1. Edit Flat Type 1 (" + project.getType1() + ")");
+        System.out.println("2. Edit Flat Type 2 (" + project.getType2() + ")");
+        System.out.println("3. Edit Application Dates");
+        System.out.println("4. Edit Officer Slots");
+        System.out.println("5. Cancel");
+        System.out.print("Choose what to edit: ");
+        
+        int editChoice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        
+        switch (editChoice) {
+            case 1 -> {
+                System.out.print("New Flat Type 1: ");
+                String newType1 = scanner.nextLine();
+                System.out.print("New Units for " + newType1 + ": ");
+                int newUnits1 = scanner.nextInt();
+                System.out.print("New Price for " + newType1 + ": ");
+                double newPrice1 = scanner.nextDouble();
+                scanner.nextLine(); // Consume newline
+                
+                project.setType1(newType1);
+                project.setUnitsType1(newUnits1);
+                project.setPriceType1(newPrice1);
+                System.out.println("Flat Type 1 updated successfully!");
+            }
+            case 2 -> {
+                System.out.print("New Flat Type 2: ");
+                String newType2 = scanner.nextLine();
+                System.out.print("New Units for " + newType2 + ": ");
+                int newUnits2 = scanner.nextInt();
+                System.out.print("New Price for " + newType2 + ": ");
+                double newPrice2 = scanner.nextDouble();
+                scanner.nextLine(); // Consume newline
+                
+                project.setType2(newType2);
+                project.setUnitsType2(newUnits2);
+                project.setPriceType2(newPrice2);
+                System.out.println("Flat Type 2 updated successfully!");
+            }
+            case 3 -> {
+                System.out.print("New Opening Date (YYYY-MM-DD): ");
+                Date newOpening = parseDate(scanner.nextLine());
+                System.out.print("New Closing Date (YYYY-MM-DD): ");
+                Date newClosing = parseDate(scanner.nextLine());
+                
+                project.setOpeningDate(newOpening);
+                project.setClosingDate(newClosing);
+                System.out.println("Application dates updated successfully!");
+            }
+            case 4 -> {
+                System.out.print("New Officer Slots: ");
+                int newSlots = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                project.setOfficerSlot(newSlots);
+                System.out.println("Officer slots updated successfully!");
+            }
+            case 5 -> { return; }
+            default -> System.out.println("Invalid choice.");
+        }
     }
 
     private void deleteProject() {
-        // Implementation for deleting a project
+        System.out.println("\n=== Delete Project ===");
+        List<BTOProject> myProjects = projectController.getProjectsByManager(manager.getNric());
+        
+        if (myProjects.isEmpty()) {
+            System.out.println("No projects found that you manage.");
+            return;
+        }
+        
+        System.out.println("\nYour Projects:");
+        for (int i = 0; i < myProjects.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, myProjects.get(i).getName());
+        }
+        
+        System.out.print("Select project to delete (0 to cancel): ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        
+        if (choice == 0) return;
+        if (choice < 1 || choice > myProjects.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+        
+        String projectName = myProjects.get(choice - 1).getName();
+        System.out.print("Are you sure you want to delete " + projectName + "? (yes/no): ");
+        String confirmation = scanner.nextLine();
+        
+        if ("yes".equalsIgnoreCase(confirmation)) {
+            if (projectController.deleteProject(projectName)) {
+                System.out.println("Project deleted successfully!");
+            } else {
+                System.out.println("Failed to delete project.");
+            }
+        } else {
+            System.out.println("Deletion cancelled.");
+        }
     }
 
     private void toggleProjectVisibility() {
-        // Implementation for toggling project visibility
+        System.out.println("\n=== Toggle Project Visibility ===");
+        List<BTOProject> myProjects = projectController.getProjectsByManager(manager.getNric());
+        
+        if (myProjects.isEmpty()) {
+            System.out.println("No projects found that you manage.");
+            return;
+        }
+        
+        System.out.println("\nYour Projects:");
+        for (int i = 0; i < myProjects.size(); i++) {
+            System.out.printf("%d. %s (Visible: %s)\n", 
+                i + 1, 
+                myProjects.get(i).getName(), 
+                myProjects.get(i).isVisible() ? "Yes" : "No");
+        }
+        
+        System.out.print("Select project to toggle (0 to cancel): ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        
+        if (choice == 0) return;
+        if (choice < 1 || choice > myProjects.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+        
+        BTOProject project = myProjects.get(choice - 1);
+        boolean newVisibility = !project.isVisible();
+        
+        if (projectController.toggleProjectVisibility(project.getName(), newVisibility)) {
+            System.out.printf("Visibility for %s set to: %s\n", 
+                project.getName(), 
+                newVisibility ? "Visible" : "Hidden");
+        } else {
+            System.out.println("Failed to update visibility.");
+        }
     }
+
+    private void filterMyProjects() {
+        System.out.println("\n=== My Projects ===");
+        List<BTOProject> myProjects = projectController.getProjectsByManager(manager.getNric());
+        
+        if (myProjects.isEmpty()) {
+            System.out.println("No projects found that you manage.");
+            return;
+        }
+        
+        System.out.println("\nProjects Under Your Management:");
+        myProjects.forEach(project -> {
+            System.out.printf("- %s (Visible: %s)\n", 
+                project.getName(), 
+                project.isVisible() ? "Yes" : "No");
+            System.out.printf("  Types: %s (%d units), %s (%d units)\n",
+                project.getType1(), project.getUnitsType1(),
+                project.getType2(), project.getUnitsType2());
+            System.out.printf("  Application Period: %s to %s\n",
+                project.getOpeningDate(), project.getClosingDate());
+        });
+    }
+
+    private void approveApplications() {
+        System.out.println("\n=== Approve/Reject Applications ===");
+        
+        // Get projects managed by this manager
+        List<BTOProject> myProjects = projectController.getProjectsByManager(manager.getNric());
+        
+        if (myProjects.isEmpty()) {
+            System.out.println("No projects found that you manage.");
+            return;
+        }
+        
+        // Show projects to select from
+        System.out.println("\nYour Projects:");
+        for (int i = 0; i < myProjects.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, myProjects.get(i).getName());
+        }
+        
+        System.out.print("Select project to view applications (0 to cancel): ");
+        int projectChoice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        
+        if (projectChoice == 0) return;
+        if (projectChoice < 1 || projectChoice > myProjects.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+    
+        BTOProject selectedProject = myProjects.get(projectChoice - 1);
+        
+        // Get pending applications for this project
+
+        List<Application> pendingApplications = applicationController.getApplicationsByProjectAndStatus(
+            selectedProject.getName(),
+            ApplicationStatus.PENDING
+            
+            );
+        
+        if (pendingApplications.isEmpty()) {
+            System.out.println("No pending applications for this project.");
+            return;
+        }
+        
+        System.out.println("\nPending Applications:");
+        for (int i = 0; i < pendingApplications.size(); i++) {
+            Application app = pendingApplications.get(i);
+            System.out.printf("%d. Applicant: %s (NRIC: %s)\n", 
+                i + 1, 
+                //app.getApplicantName(), 
+                app.getApplicantNric());
+        }
+    
+        System.out.print("Select application to process (0 to cancel): ");
+        int appChoice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        
+        if (appChoice == 0) return;
+        if (appChoice < 1 || appChoice > pendingApplications.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+        
+        Application selectedApp = pendingApplications.get(appChoice - 1);
+        
+        System.out.println("\nApplication Details:");
+        System.out.println("- Project: " + selectedApp.getProjectName());
+        //System.out.println("- Applicant: " + selectedApp.getApplicantName());
+        System.out.println("- NRIC: " + selectedApp.getApplicantNric());
+        //System.out.println("- Applied On: " + selectedApp.getApplicationDate());
+        
+        System.out.print("\nApprove this application? (approve/reject/cancel): ");
+        String decision = scanner.nextLine().toLowerCase();
+        
+        switch (decision) {
+            case "approve" -> {
+                // Check flat availability
+                if (managerController.approveApplication(selectedApp, selectedProject)) {
+                    System.out.println("Application approved successfully!");
+                } else {
+                    System.out.println("Failed to approve application (no available flats).");
+                }
+            }
+            case "reject" -> {
+                applicationController.updateApplicationStatus(
+                    selectedApp.getApplicationId(),
+                    ApplicationStatus.REJECTED
+                );
+                System.out.println("Application rejected.");
+            }
+            case "cancel" -> System.out.println("Operation cancelled.");
+            default -> System.out.println("Invalid choice. Operation cancelled.");
+        }
+    }
+
+    
 
     private void approveOfficerRegistrations() {
         // Implementation for approving officer registrations
     }
 
-    private void approveApplications() {
-        // Implementation for approving applications
-    }
-
-    private void approveWithdrawalRequests() {
-        // Implementation for approving withdrawal requests
-    }
-
     private void generateReports() {
         // Implementation for generating reports
-    }
-
-    private void filterMyProjects() {
-        // Implementation for filtering manager's own projects
     }
 
     private void changePassword(Scanner scanner) {
@@ -104,4 +439,6 @@ public class HDBManagerUI {
         manager.setPassword(newPassword);
         System.out.println("Password changed successfully.");
     }
+
+    
 }

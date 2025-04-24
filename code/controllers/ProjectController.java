@@ -51,6 +51,16 @@ public class ProjectController {
         return false; // Default: Not eligible
     }
 
+    public List<BTOProject> getProjectsByManager(String managerNric) {
+        return projects.stream()
+                .filter(p -> p.getManager().equalsIgnoreCase(managerNric))
+                .collect(Collectors.toList());
+    }
+    
+    public boolean deleteProject(String projectName) {
+        return projects.removeIf(p -> p.getName().equalsIgnoreCase(projectName));
+    }
+
 
 
 }

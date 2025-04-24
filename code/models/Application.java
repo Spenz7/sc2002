@@ -1,12 +1,15 @@
 package models;
 
 import models.enums.ApplicationStatus;
+//import java.util.Date;
 
 public class Application {
     // Attributes
     private int applicationId;        // Unique identifier for the application
     private String applicantNric;     // NRIC of the applicant who submitted the application
-    private String projectName;       // Name of the BTO project being applied for
+    private String projectName;   
+    private int flatType; // "2-Room" or "3-Room"
+    //private Date applicationDate;    // Date of the BTO project being applied for
     private ApplicationStatus status; // Current status of the application (e.g., "Pending", "Approved")
 
     // Constructor
@@ -37,6 +40,11 @@ public class Application {
     public String getProjectName() {
         return projectName;
     }
+
+    public int getFlatType() {
+        return flatType;
+    }
+    
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
