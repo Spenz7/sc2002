@@ -1,8 +1,10 @@
 package views;
 
-import controllers.ApplicationController;
+import controllers.OfficerRegistrationController;
 import controllers.EnquiryController;
 import controllers.ProjectController;
+import models.BTOProject;
+import models.Enquiry;
 import models.HDBOfficer;
 
 import java.util.List;
@@ -13,17 +15,17 @@ import utils.DataLoader;
 public class HDBOfficerUI {
     private final Scanner scanner;
     private final HDBOfficer officer;
-    private final ApplicationController applicationController;
+    private final OfficerRegistrationController registrationController;
     private final EnquiryController enquiryController;
     private final ProjectController projectController;
 
     public HDBOfficerUI(Scanner scanner, HDBOfficer officer,
-                        ApplicationController applicationController,
+                        OfficerRegistrationController registrationController,
                         EnquiryController enquiryController,
                         ProjectController projectController) {
         this.scanner = scanner;
         this.officer = officer;
-        this.applicationController = applicationController;
+        this.registrationController = registrationController;
         this.enquiryController = enquiryController;
         this.projectController = projectController;
     }
@@ -66,40 +68,108 @@ public class HDBOfficerUI {
     }
 
     private void registerForProject() {
-        // Implementation for registering for a project
+        List<BTOProject> availableProjects = projectController.getAvailableProjectsForRegistration(officer);
+        if (availableProjects.isEmpty()) {
+            System.out.println("No projects available for registration.");
+            return;
+        }
+
+        System.out.println("\nAvailable Projects for Registration:");
+        for (int i = 0; i < availableProjects.size(); i++) {
+            System.out.printf("%d. %s (%s)\n", i + 1, availableProjects.get(i).getProjectName(),
+                    availableProjects.get(i).getNeighborhood());
+        }
+
+        System.out.print("Select a project to register (Enter number): ");
+        int selectedProjectIndex = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (selectedProjectIndex < 1 || selectedProjectIndex > availableProjects.size()) {
+            System.out.println("Invalid selection. Returning to dashboard.");
+            return;
+        }
+
+        BTOProject selectedProject = availableProjects.get(selectedProjectIndex - 1);
+
+        boolean isSuccess = registrationController.submitRegistrationRequest(officer, selectedProject);
+        if (isSuccess) {
+            System.out.println("Registration request submitted successfully for project: " 
+                    + selectedProject.getProjectName());
+        } else {
+            System.out.println("Failed to submit registration request. Please try again.");
+        }
     }
 
     private void viewRegistrationStatus() {
-        // Implementation for viewing registration status
+        String status = registrationController.getRegistrationStatus(officer);
+        System.out.println("Your registration status: " + status);
     }
 
     private void viewReplyEnquiries() {
-        // Implementation for viewing/replying to enquiries
+        List<Enquiry> enquiries = enquiryController.getEnquiriesForOfficer(officer);
+
+        if (enquiries.isEmpty()) {
+            System.out.println("No enquiries available to reply.");
+            return;
+        }
+
+        System.out.println("\nEnquiries:");
+        for (int i = 0; i < enquiries.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, enquiries.get(i).getMessage());
+        }
+
+        System.out.print("Select an enquiry to reply (Enter number): ");
+        int selectedEnquiryIndex = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (selectedEnquiryIndex < 1 || selectedEnquiryIndex > enquiries.size()) {
+            System.out.println("Invalid selection. Returning to dashboard.");
+            return;
+        }
+
+        Enquiry selectedEnquiry = enquiries.get(selectedEnquiryIndex - 1);
+
+        System.out.print("Enter your reply: ");
+        String reply = scanner.nextLine();
+
+        enquiryController.replyToEnquiry(officer, selectedEnquiry, reply);
+        System.out.println("Reply submitted successfully.");
     }
 
     private void viewAssignedProjectDetails() {
-        // Implementation for viewing assigned project details
+        BTOProject assignedProject = officer.getAssignedProject();
+
+        if (assignedProject == null) {
+            System.out.println("You are not assigned to any project.");
+            return;
+        }
+
+        System.out.println("\nAssigned Project Details:");
+        System.out.println("Project Name: " + assignedProject.getProjectName());
+        System.out.println("Neighborhood: " + assignedProject.getNeighborhood());
+        System.out.println("Flat Types and Availability:");
+        assignedProject.getFlatAvailability().forEach((type, count) -> 
+                System.out.printf("%s: %d units remaining\n", type, count));
     }
 
     private void processFlatBooking() {
-        // Implementation for processing flat booking
+        System.out.println("Flat booking logic to be implemented...");
     }
 
     private void updateFlatAvailability() {
-        // Implementation for updating flat availability
+        System.out.println("Flat availability update logic to be implemented...");
     }
 
     private void generateReceipt() {
-        // Implementation for generating a receipt
+        System.out.println("Receipt generation logic to be implemented...");
     }
 
     private void changePassword(Scanner scanner) {
         System.out.print("Enter your new password: ");
         String newPassword = scanner.nextLine();
-        officer.setPassword(newPassword); // Update in-memory password
+        officer.setPassword(newPassword);
 
-        // Persist password update to a CSV file using a utility class (DataLoader or FileUtils)
-        DataLoader.updateOfficerPasswordInCsv(officer, "data/OfficerList.csv"); 
+        DataLoader.updateOfficerPasswordInCsv(officer, "data/OfficerList.csv");
         System.out.println("Password changed successfully.");
     }
 }

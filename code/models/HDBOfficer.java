@@ -1,53 +1,40 @@
 package models;
 
+import models.enums.RegistrationStatus;
+
 public class HDBOfficer {
-    // Attributes
     private String name;
     private String nric;
     private int age;
     private String maritalStatus;
     private String password;
+    private RegistrationStatus registrationStatus;
+    private BTOProject assignedProject;
 
-    // Constructor
     public HDBOfficer(String name, String nric, int age, String maritalStatus, String password) {
         this.name = name;
         this.nric = nric;
         this.age = age;
         this.maritalStatus = maritalStatus;
         this.password = password;
+        this.registrationStatus = null; // Default to null
+        this.assignedProject = null; // Default to no project assigned
     }
 
-    // Getters and Setters
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getNric() {
         return nric;
     }
 
-    public void setNric(String nric) {
-        this.nric = nric;
-    }
-
     public int getAge() {
         return age;
     }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
     public String getMaritalStatus() {
         return maritalStatus;
-    }
-
-    public void setMaritalStatus(String maritalStatus) {
-        this.maritalStatus = maritalStatus;
     }
 
     public String getPassword() {
@@ -58,30 +45,29 @@ public class HDBOfficer {
         this.password = password;
     }
 
-    // Method: Validate NRIC Format
-    public boolean isValidNric() {
-        String nricRegex = "^[STFG]\\d{7}[A-Z]$"; // Ensuring compliance with NRIC format
-        return nric.matches(nricRegex);
+    public RegistrationStatus getRegistrationStatus() {
+        return registrationStatus;
     }
 
-    // Method: Check Password
-    public boolean checkPassword(String inputPassword) {
-        return this.password.equals(inputPassword);
+    public void setRegistrationStatus(RegistrationStatus registrationStatus) {
+        this.registrationStatus = registrationStatus;
     }
 
-    // Method: Change Password
+    public BTOProject getAssignedProject() {
+        return assignedProject;
+    }
+
+    public void setAssignedProject(BTOProject assignedProject) {
+        this.assignedProject = assignedProject;
+    }
+
+    // Add this method to change the officer's password
     public void changePassword(String newPassword) {
         this.password = newPassword;
     }
 
-    // Override toString for Displaying Officer Information
-    @Override
-    public String toString() {
-        return "HDBOfficer{" +
-                "name='" + name + '\'' +
-                ", nric='" + nric + '\'' +
-                ", age=" + age +
-                ", maritalStatus='" + maritalStatus + '\'' +
-                '}';
+    // Add this method to check password
+    public boolean checkPassword(String inputPassword) {
+        return this.password.equals(inputPassword);
     }
 }

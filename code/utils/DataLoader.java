@@ -6,19 +6,10 @@ import models.HDBManager;
 import models.BTOProject;
 import models.enums.FlatType;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import java.text.SimpleDateFormat;
+import java.io.*;
 import java.text.ParseException;
-import java.util.Date;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class DataLoader {
 
@@ -143,6 +134,54 @@ public class DataLoader {
         }
         return projects;
     }
+
+    // Save officer registration to CSV
+    public static void saveOfficerRegistration(String officerNric, String projectName, String status) throws IOException {
+        String filePath = "data/OfficerRegistrations.csv"; // Adjust the file path as needed
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true))) {
+            bw.write(officerNric + "," + projectName + "," + status);
+            bw.newLine();
+        }
+    }
+
+    // Retrieve officer registration status from CSV
+    public static String getOfficerRegistrationStatus(String officerNric) throws IOException {
+        String filePath = "data/OfficerRegistrations.csv"; // Adjust the file path as needed
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[0].equals(officerNric)) {
+                    return data[2]; // Registration status is stored in the third column
+                }
+            }
+        }
+        return "No registration found.";
+    }
+
+    // Update officer registration status in CSV
+    public static void updateOfficerRegistrationStatus(String officerNric, String status) throws IOException {
+        String filePath = "data/OfficerRegistrations.csv"; // Adjust the file path as needed
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[0].equals(officerNric)) {
+                    data[2] = status; // Update the registration status
+                }
+                lines.add(String.join(",", data));
+            }
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+            for (String updatedLine : lines) {
+                bw.write(updatedLine);
+                bw.newLine();
+            }
+        }
+    }
+
     // Update officer's password in CSV
     public static void updateOfficerPasswordInCsv(HDBOfficer officer, String filePath) {
         try {
@@ -178,5 +217,4 @@ public class DataLoader {
             System.err.println("Error updating officer password in file: " + e.getMessage());
         }
     }
-
 }
