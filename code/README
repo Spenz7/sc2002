@@ -1,6 +1,6 @@
 tests folder is optional
 
-src/
+code/
 ├── Main.java
 ├── data/
 │   ├── ApplicantList.csv
