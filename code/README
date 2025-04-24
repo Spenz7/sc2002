@@ -29,7 +29,6 @@ code/
 │   ├── ManagerController.java
 │   ├── OfficerRegistrationController.java
 │   ├── FilterController.java
-│   ├── OfficerController.java (so far mainly for pw change)
 ├── utils/
 │   ├── DataLoader.java
 │   ├── FileUtils.java
