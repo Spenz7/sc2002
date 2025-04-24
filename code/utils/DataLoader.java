@@ -132,34 +132,149 @@ public class DataLoader {
         return projects;
     }
 
-    // Save officer registration to CSV
-    public static void saveOfficerRegistration(String officerNric, String projectName, String status) throws IOException {
-        String filePath = "data/OfficerRegistrations.csv"; // Adjust the file path as needed
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true))) {
-            bw.write(officerNric + "," + projectName + "," + status);
-            bw.newLine();
-        }
-    }
+    // Update applicant's booking
+    public static boolean updateApplicantBooking(String applicantNric, String flatType, String projectName) {
+        String filePath = "data/Applicants.csv"; // Adjust file path as needed
+        List<String> lines = new ArrayList<>();
+        boolean updated = false;
 
-    // Retrieve officer registration status from CSV
-    public static String getOfficerRegistrationStatus(String officerNric) throws IOException {
-        String filePath = "data/OfficerRegistrations.csv"; // Adjust the file path as needed
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data[0].equals(officerNric)) {
-                    return data[2]; // Registration status is stored in the third column
+                if (data[1].equals(applicantNric)) {
+                    if (data.length < 6) {
+                        data = Arrays.copyOf(data, 7); // Expand columns if necessary
+                    }
+                    data[5] = "Booked"; // Set application status
+                    data[6] = flatType; // Set booked flat type
+                    data = Arrays.copyOf(data, 8);
+                    data[7] = projectName; // Store project name
+                    updated = true; // Indicate successful update
                 }
+                lines.add(String.join(",", data));
             }
+        } catch (IOException e) {
+            System.err.println("Error updating applicant booking: " + e.getMessage());
+            return false; // Return false if an error occurs
         }
-        return "No registration found.";
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+            for (String updatedLine : lines) {
+                bw.write(updatedLine);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing updated booking to file: " + e.getMessage());
+            return false; // Return false if an error occurs
+        }
+
+        return updated; // Return true if booking was successfully updated
     }
 
-    // Update officer registration status in CSV
-    public static void updateOfficerRegistrationStatus(String officerNric, String status) throws IOException {
+
+    public static String getApplicantName(String applicantNric) {
+        String filePath = "data/Applicants.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[1].equals(applicantNric)) {
+                    return data[0]; // Name
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error accessing applicant data: " + e.getMessage());
+        }
+        return null; // Return null if not found
+    }
+
+    public static int getApplicantAge(String applicantNric) {
+        String filePath = "data/Applicants.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[1].equals(applicantNric)) {
+                    return Integer.parseInt(data[2]); // Age
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error accessing applicant data: " + e.getMessage());
+        }
+        return -1; // Return -1 if not found
+    }
+
+    public static String getApplicantApplicationStatus(String applicantNric) {
+        String filePath = "data/Applicants.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[1].equals(applicantNric)) {
+                    return data.length > 5 ? data[5] : "Unknown"; // Application Status
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error accessing applicant data: " + e.getMessage());
+        }
+        return "Unknown"; // Return "Unknown" if not found
+    }
+
+
+    // Retrieve applicant's booked flat type
+    public static String getApplicantBookedFlatType(String applicantNric) {
+        String filePath = "data/Applicants.csv"; // Adjust file path as needed
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[1].equals(applicantNric)) {
+                    return data.length > 6 ? data[6] : null; // Return booked flat type or null
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error retrieving booked flat type: " + e.getMessage());
+        }
+        return null; // Return null if an error occurs or no booking is found
+    }
+
+
+    // Save officer registration to CSV
+    public static void saveOfficerRegistration(String officerNric, String projectName, String status) throws IOException {
         String filePath = "data/OfficerRegistrations.csv"; // Adjust the file path as needed
         List<String> lines = new ArrayList<>();
+
+        // Read existing entries to check for duplicates
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.add(line); // Add existing lines to the list
+                String[] data = line.split(",");
+                // Check if the NRIC and project name already exist
+                if (data[0].equals(officerNric) && data[1].equals(projectName)) {
+                    System.out.println("Registration already exists for Officer " + officerNric + " in project " + projectName);
+                    return; // Exit without saving duplicate entry
+                }
+            }
+        } catch (FileNotFoundException e) {
+            // File not found – this is likely the first entry, so we create the file
+            System.out.println("OfficerRegistrations.csv does not exist yet. Creating new file.");
+        }
+
+        // Append the new entry if no duplicates are found
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true))) {
+            bw.write(officerNric + "," + projectName + "," + status); // Write the new registration entry
+            bw.newLine();
+        }
+
+        System.out.println("Successfully registered Officer " + officerNric + " for project " + projectName + ".");
+    }
+
+    public static void updateOfficerRegistrationStatus(String officerNric, String status) throws IOException {
+        String filePath = "data/OfficerRegistrations.csv";
+        List<String> lines = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -179,10 +294,25 @@ public class DataLoader {
         }
     }
 
-    // Update officer's password in CSV
-    public static void updateOfficerPasswordInCsv(HDBOfficer officer, String filePath) {
+    public static String getOfficerRegistrationStatus(String officerNric) throws IOException {
+        String filePath = "data/OfficerRegistrations.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[0].equals(officerNric)) {
+                    return data[2]; // Registration status is in the third column
+                }
+            }
+        }
+        return "No registration found.";
+    }
+
+    public static boolean updateOfficerPasswordInCsv(HDBOfficer officer, String filePath) {
         try {
             List<String> lines = new ArrayList<>();
+            boolean updated = false;
+
             try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
                 String line;
                 boolean isHeader = true;
@@ -196,11 +326,13 @@ public class DataLoader {
                     if (data[1].trim().equals(officer.getNric())) {
                         // Update password for matching NRIC
                         data[4] = officer.getPassword();
-                        lines.add(String.join(",", data));
-                    } else {
-                        lines.add(line);
+                        updated = true;
                     }
+                    lines.add(String.join(",", data));
                 }
+            } catch (FileNotFoundException e) {
+                System.err.println("File not found: " + filePath);
+                return false; // Return false if file is not found
             }
 
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
@@ -208,46 +340,38 @@ public class DataLoader {
                     bw.write(updatedLine);
                     bw.newLine();
                 }
+            } catch (IOException e) {
+                System.err.println("Error writing to file: " + e.getMessage());
+                return false; // Return false if writing to the file fails
             }
-            System.out.println("Password updated in CSV for officer: " + officer.getNric());
-        } catch (IOException e) {
-            System.err.println("Error updating officer password in file: " + e.getMessage());
+
+            if (!updated) {
+                System.out.println("No matching NRIC found for officer: " + officer.getNric());
+            }
+
+            return updated; // Return true if the update succeeded, false otherwise
+
+        } catch (Exception e) {
+            System.err.println("An unexpected error occurred: " + e.getMessage());
+            return false;
         }
     }
 
-    // Update officer's password in CSV
-    public static void updateOfficerPasswordInCsv(HDBOfficer officer, String filePath) {
-        try {
-            List<String> lines = new ArrayList<>();
-            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-                String line;
-                boolean isHeader = true;
-                while ((line = br.readLine()) != null) {
-                    if (isHeader) {
-                        isHeader = false;
-                        lines.add(line); // Add the header line as is
-                        continue;
-                    }
-                    String[] data = line.split(",");
-                    if (data[1].trim().equals(officer.getNric())) {
-                        // Update password for matching NRIC
-                        data[4] = officer.getPassword();
-                        lines.add(String.join(",", data));
-                    } else {
-                        lines.add(line);
-                    }
-                }
-            }
 
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
-                for (String updatedLine : lines) {
-                    bw.write(updatedLine);
-                    bw.newLine();
+    public static String getApplicantMaritalStatus(String applicantNric) {
+        String filePath = "data/Applicants.csv"; // Adjust file path as needed
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[1].equals(applicantNric)) { // Assuming column 1 is NRIC
+                    return data[3]; // Assuming column 3 stores marital status
                 }
             }
-            System.out.println("Password updated in CSV for officer: " + officer.getNric());
         } catch (IOException e) {
-            System.err.println("Error updating officer password in file: " + e.getMessage());
+            System.err.println("Error accessing applicant data: " + e.getMessage());
         }
+        return null; // Return null if not found
     }
+
 }

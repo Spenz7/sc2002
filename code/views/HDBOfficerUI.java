@@ -169,7 +169,11 @@ public class HDBOfficerUI {
         String newPassword = scanner.nextLine();
         officer.setPassword(newPassword);
 
-        DataLoader.updateOfficerPasswordInCsv(officer, "data/OfficerList.csv");
-        System.out.println("Password changed successfully.");
+        boolean success = DataLoader.updateOfficerPasswordInCsv(officer, "data/OfficerList.csv");
+        if (success) {
+            System.out.println("Password updated successfully.");
+        } else {
+            System.err.println("Failed to update password. Please try again.");
+        }
     }
 }
