@@ -29,12 +29,16 @@ src/
 │   ├── ManagerController.java
 │   ├── OfficerRegistrationController.java
 │   ├── FilterController.java
+│   ├── OfficerController.java (so far mainly for pw change)
 ├── utils/
 │   ├── DataLoader.java
 │   ├── FileUtils.java
 │   └── PasswordUtils.java
 ├── views/
 │   └── ConsoleUI.java
+|   └── ApplicantUI.java
+|   └── HDBManagerUI.java
+|   └── HDBOfficerUI.java
 └── tests/
     ├── controllers/
     │   ├── AuthControllerTest.java
