@@ -38,13 +38,3 @@ code/
 |   └── ApplicantUI.java
 |   └── HDBManagerUI.java
 |   └── HDBOfficerUI.java
-└── tests/
-    ├── controllers/
-    │   ├── AuthControllerTest.java
-    │   ├── ApplicationControllerTest.java
-    │   └── ProjectControllerTest.java
-    └── models/
-        ├── ApplicantTest.java
-        ├── HDBOfficerTest.java
-        ├── HDBManagerTest.java
-        └── BTOProjectTest.java
