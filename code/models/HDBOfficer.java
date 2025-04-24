@@ -7,7 +7,6 @@ import java.util.Scanner;
 import java.io.IOException;
 import java.util.InputMismatchException;
 
-
 public class HDBOfficer {
     private String name;
     private String nric;
@@ -80,8 +79,6 @@ public class HDBOfficer {
     }
 
     public void processFlatBooking() {
-        Scanner scanner = new Scanner(System.in);
-
         // Check if the officer is assigned to a project
         if (assignedProject == null) {
             System.out.println("You are not assigned to any project.");
@@ -92,13 +89,7 @@ public class HDBOfficer {
         System.out.print("Enter Applicant's NRIC for flat booking: ");
         String applicantNric = scanner.nextLine().trim();
 
-        // Retrieve the applicant's booked flat type
-        String bookedFlatType = DataLoader.getApplicantBookedFlatType(applicantNric);
-        if (bookedFlatType == null) {
-            System.out.println("No booked flat type found for applicant NRIC: " + applicantNric);
-        }
-
-        // Fetch the applicant's application status
+        // Retrieve the applicant's application status
         String applicationStatus = DataLoader.getApplicantApplicationStatus(applicantNric);
         if (!"Successful".equalsIgnoreCase(applicationStatus)) {
             System.out.println("Applicant's application is not successful. Cannot process booking.");
@@ -112,32 +103,29 @@ public class HDBOfficer {
 
         // Display available flat types
         System.out.println("\nAvailable Flat Types:");
-        System.out.printf("1. %s (%d units available) - Price: $%.2f\n",
-                assignedProject.getType1(), assignedProject.getUnitsType1(), assignedProject.getPriceType1());
-        System.out.printf("2. %s (%d units available) - Price: $%.2f\n",
-                assignedProject.getType2(), assignedProject.getUnitsType2(), assignedProject.getPriceType2());
+        System.out.println("1. 2-Room (" + assignedProject.getTwoRoomFlats() + " units available)");
+        System.out.println("2. 3-Room (" + assignedProject.getThreeRoomFlats() + " units available)");
 
         // Collect flat type choice
-        System.out.print("Enter flat type choice (1 for " + assignedProject.getType1() +
-                ", 2 for " + assignedProject.getType2() + "): ");
+        System.out.print("Enter flat type choice (1 for 2-Room, 2 for 3-Room): ");
         int choice = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
         String chosenFlatType;
         if (choice == 1) {
-            chosenFlatType = assignedProject.getType1();
-            if (assignedProject.getUnitsType1() <= 0) {
-                System.out.println("No available units for " + chosenFlatType);
+            chosenFlatType = "2-Room";
+            if (assignedProject.getTwoRoomFlats() <= 0) {
+                System.out.println("No available 2-Room units");
                 return;
             }
-            assignedProject.setUnitsType1(assignedProject.getUnitsType1() - 1);
+            assignedProject.setTwoRoomFlats(assignedProject.getTwoRoomFlats() - 1);
         } else if (choice == 2) {
-            chosenFlatType = assignedProject.getType2();
-            if (assignedProject.getUnitsType2() <= 0) {
-                System.out.println("No available units for " + chosenFlatType);
+            chosenFlatType = "3-Room";
+            if (assignedProject.getThreeRoomFlats() <= 0) {
+                System.out.println("No available 3-Room units");
                 return;
             }
-            assignedProject.setUnitsType2(assignedProject.getUnitsType2() - 1);
+            assignedProject.setThreeRoomFlats(assignedProject.getThreeRoomFlats() - 1);
         } else {
             System.out.println("Invalid choice. Booking aborted.");
             return;
@@ -146,20 +134,13 @@ public class HDBOfficer {
         // Update applicant's booking details
         boolean success = DataLoader.updateApplicantBooking(applicantNric, chosenFlatType, assignedProject.getProjectName());
         if (success) {
-            System.out.println("Flat booking processed successfully. Applicant " + applicantNric + " has booked a " + chosenFlatType + " unit.");
+            System.out.println("Flat booking processed successfully. Applicant " + 
+                               applicantNric + " has booked a " + chosenFlatType + " unit.");
         } else {
             System.err.println("Failed to update applicant's booking.");
         }
     }
 
-
-
-
-
-
-
-
-    // Option 6: Update Flat Availability
     public void updateFlatAvailability() {
         if (assignedProject == null) {
             System.out.println("You are not assigned to any project.");
@@ -167,13 +148,14 @@ public class HDBOfficer {
         }
 
         System.out.println("\nCurrent Flat Availability:");
-        System.out.println(assignedProject.getType1() + ": " + assignedProject.getUnitsType1() + " units");
-        System.out.println(assignedProject.getType2() + ": " + assignedProject.getUnitsType2() + " units");
+        System.out.println("2-Room: " + assignedProject.getTwoRoomFlats() + " units");
+        System.out.println("3-Room: " + assignedProject.getThreeRoomFlats() + " units");
 
-        System.out.print("Enter flat type to update (e.g., '2-Room' or '3-Room'): ");
-        String flatType = scanner.nextLine().trim();
+        System.out.print("Enter flat type to update (2 or 3): ");
+        int flatTypeChoice = scanner.nextInt();
+        scanner.nextLine();
 
-        System.out.print("Enter new available units for " + flatType + ": ");
+        System.out.print("Enter new available units: ");
         int newCount = scanner.nextInt();
         scanner.nextLine();
 
@@ -182,49 +164,33 @@ public class HDBOfficer {
             return;
         }
 
-        if (flatType.equalsIgnoreCase(assignedProject.getType1())) {
-            assignedProject.setUnitsType1(newCount);
-        } else if (flatType.equalsIgnoreCase(assignedProject.getType2())) {
-            assignedProject.setUnitsType2(newCount);
+        if (flatTypeChoice == 2) {
+            assignedProject.setTwoRoomFlats(newCount);
+            System.out.println("2-Room availability updated to " + newCount + " units.");
+        } else if (flatTypeChoice == 3) {
+            assignedProject.setThreeRoomFlats(newCount);
+            System.out.println("3-Room availability updated to " + newCount + " units.");
         } else {
-            System.out.println("Invalid flat type provided.");
-            return;
+            System.out.println("Invalid choice. Please enter 2 or 3.");
         }
-
-        System.out.println("Flat availability updated: " + flatType + " now has " + newCount + " unit(s) available.");
     }
 
-    // Option 7: Generate Receipt
     public String generateReceipt(String applicantNric) {
         if (assignedProject == null) {
             return "You are not assigned to any project.";
         }
 
-        // Retrieve applicant details using DataLoader
+        // Retrieve applicant details
         String applicantName = DataLoader.getApplicantName(applicantNric);
         int applicantAge = DataLoader.getApplicantAge(applicantNric);
         String maritalStatus = DataLoader.getApplicantMaritalStatus(applicantNric);
         String bookedFlatType = DataLoader.getApplicantBookedFlatType(applicantNric);
 
-        // Verify that applicant details were successfully retrieved
-        if (applicantName == null || maritalStatus == null || bookedFlatType == null || bookedFlatType.isEmpty()) {
+        if (applicantName == null || maritalStatus == null || bookedFlatType == null) {
             return "No valid booking found for applicant NRIC: " + applicantNric;
         }
 
-        // Determine the price based on the booked flat type
-        double unitPrice;
-        if (bookedFlatType.equalsIgnoreCase(assignedProject.getType1())) {
-            unitPrice = assignedProject.getPriceType1();
-        } else if (bookedFlatType.equalsIgnoreCase(assignedProject.getType2())) {
-            unitPrice = assignedProject.getPriceType2();
-        } else {
-            return "Booked flat type does not match project details.";
-        }
-
-        // Calculate the total cost (simple implementation for now)
-        double totalCost = unitPrice;
-
-        // Generate the receipt
+        // Generate the receipt (without price information)
         return String.format(
                 "\n--- Booking Receipt ---\n" +
                 "Applicant Name   : %s\n" +
@@ -234,8 +200,6 @@ public class HDBOfficer {
                 "Project          : %s\n" +
                 "Neighborhood     : %s\n" +
                 "Booked Flat Type : %s\n" +
-                "Unit Price       : $%.2f\n" +
-                "Total Cost       : $%.2f\n" +
                 "-------------------------\n",
                 applicantName.isEmpty() ? "Unknown" : applicantName,
                 applicantNric,
@@ -243,10 +207,7 @@ public class HDBOfficer {
                 maritalStatus.isEmpty() ? "Unknown" : maritalStatus,
                 assignedProject.getProjectName(),
                 assignedProject.getNeighborhood(),
-                bookedFlatType,
-                unitPrice,
-                totalCost
+                bookedFlatType
         );
     }
-
 }

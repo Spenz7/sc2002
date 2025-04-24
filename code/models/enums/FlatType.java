@@ -1,6 +1,7 @@
 package models.enums;
 
 public enum FlatType {
+    TWO_ROOM("2-room"),
     THREE_ROOM("3-room"),
     FOUR_ROOM("4-room"),
     FIVE_ROOM("5-room"),

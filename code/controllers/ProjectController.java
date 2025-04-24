@@ -55,7 +55,7 @@ public class ProjectController {
     // Helper method to check applicant eligibility for a flat type
     private boolean isEligibleForFlatType(Applicant applicant, BTOProject project) {
         if ("Single".equalsIgnoreCase(applicant.getMaritalStatus())) {
-            return applicant.getAge() >= 35 && "2-Room".equalsIgnoreCase(project.getType1());
+            return applicant.getAge() >= 35 && project.getTwoRoomFlats() > 0;
         } else if ("Married".equalsIgnoreCase(applicant.getMaritalStatus())) {
             return applicant.getAge() >= 21; // Married applicants must be >= 21
         }

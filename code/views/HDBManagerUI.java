@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Date;
 
-
 public class HDBManagerUI {
     private final Scanner scanner;
     private final HDBManager manager;
@@ -26,7 +25,9 @@ public class HDBManagerUI {
     private final ProjectController projectController;
     private final ApplicationController applicationController;
 
-    public HDBManagerUI(Scanner scanner, HDBManager manager, 
+    public HDBManagerUI(
+    Scanner scanner, 
+    HDBManager manager, 
     ManagerController managerController, 
     ProjectController projectController,
     ApplicationController applicationController) {
@@ -35,15 +36,6 @@ public class HDBManagerUI {
         this.managerController = managerController;
         this.projectController = projectController;
         this.applicationController = applicationController;
-    }
-
-    private Date parseDate(String dateStr) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
-        } catch (ParseException e) {
-            System.out.println("Invalid date format. Using current date.");
-            return new Date();
-        }
     }
 
     public void showMenu() {
@@ -86,6 +78,7 @@ public class HDBManagerUI {
             }
         }
     }
+
     private void createNewProject() {
         System.out.println("\n=== Create New BTO Project ===");
         
@@ -95,24 +88,12 @@ public class HDBManagerUI {
         System.out.print("Neighborhood: ");
         String neighborhood = scanner.nextLine();
         
-        System.out.print("Flat Type 1 (e.g., 2-Room): ");
-        String type1 = scanner.nextLine();
-        
-        System.out.print("Units Available for " + type1 + ": ");
-        int unitsType1 = scanner.nextInt();
-        
-        System.out.print("Price for " + type1 + ": ");
-        double priceType1 = scanner.nextDouble();
+        System.out.print("Number of 2-Room Flats: ");
+        int twoRoomFlats = scanner.nextInt();
         scanner.nextLine(); // Consume newline
         
-        System.out.print("Flat Type 2 (e.g., 3-Room): ");
-        String type2 = scanner.nextLine();
-        
-        System.out.print("Units Available for " + type2 + ": ");
-        int unitsType2 = scanner.nextInt();
-        
-        System.out.print("Price for " + type2 + ": ");
-        double priceType2 = scanner.nextDouble();
+        System.out.print("Number of 3-Room Flats: ");
+        int threeRoomFlats = scanner.nextInt();
         scanner.nextLine(); // Consume newline
         
         System.out.print("Application Opening Date (YYYY-MM-DD): ");
@@ -130,12 +111,8 @@ public class HDBManagerUI {
         BTOProject newProject = new BTOProject(
             name,
             neighborhood,
-            type1,
-            unitsType1,
-            priceType1,
-            type2,
-            unitsType2,
-            priceType2,
+            twoRoomFlats,
+            threeRoomFlats,
             openingDate,
             closingDate,
             manager.getNric(), // Manager in charge
@@ -146,6 +123,7 @@ public class HDBManagerUI {
         projectController.createProject(newProject);
         System.out.println("Project created successfully!");
     }
+
     private void editProject() {
         System.out.println("\n=== Edit Project ===");
         List<BTOProject> myProjects = projectController.getProjectsByManager(manager.getNric());
@@ -173,8 +151,8 @@ public class HDBManagerUI {
         BTOProject project = myProjects.get(choice - 1);
         
         System.out.println("\nEditing Project: " + project.getName());
-        System.out.println("1. Edit Flat Type 1 (" + project.getType1() + ")");
-        System.out.println("2. Edit Flat Type 2 (" + project.getType2() + ")");
+        System.out.println("1. Edit 2-Room Flats (Current: " + project.getTwoRoomFlats() + ")");
+        System.out.println("2. Edit 3-Room Flats (Current: " + project.getThreeRoomFlats() + ")");
         System.out.println("3. Edit Application Dates");
         System.out.println("4. Edit Officer Slots");
         System.out.println("5. Cancel");
@@ -185,32 +163,20 @@ public class HDBManagerUI {
         
         switch (editChoice) {
             case 1 -> {
-                System.out.print("New Flat Type 1: ");
-                String newType1 = scanner.nextLine();
-                System.out.print("New Units for " + newType1 + ": ");
-                int newUnits1 = scanner.nextInt();
-                System.out.print("New Price for " + newType1 + ": ");
-                double newPrice1 = scanner.nextDouble();
+                System.out.print("New number of 2-Room Flats: ");
+                int newTwoRoom = scanner.nextInt();
                 scanner.nextLine(); // Consume newline
                 
-                project.setType1(newType1);
-                project.setUnitsType1(newUnits1);
-                project.setPriceType1(newPrice1);
-                System.out.println("Flat Type 1 updated successfully!");
+                project.setTwoRoomFlats(newTwoRoom);
+                System.out.println("2-Room flats updated successfully!");
             }
             case 2 -> {
-                System.out.print("New Flat Type 2: ");
-                String newType2 = scanner.nextLine();
-                System.out.print("New Units for " + newType2 + ": ");
-                int newUnits2 = scanner.nextInt();
-                System.out.print("New Price for " + newType2 + ": ");
-                double newPrice2 = scanner.nextDouble();
+                System.out.print("New number of 3-Room Flats: ");
+                int newThreeRoom = scanner.nextInt();
                 scanner.nextLine(); // Consume newline
                 
-                project.setType2(newType2);
-                project.setUnitsType2(newUnits2);
-                project.setPriceType2(newPrice2);
-                System.out.println("Flat Type 2 updated successfully!");
+                project.setThreeRoomFlats(newThreeRoom);
+                System.out.println("3-Room flats updated successfully!");
             }
             case 3 -> {
                 System.out.print("New Opening Date (YYYY-MM-DD): ");
@@ -326,13 +292,14 @@ public class HDBManagerUI {
             System.out.printf("- %s (Visible: %s)\n", 
                 project.getName(), 
                 project.isVisible() ? "Yes" : "No");
-            System.out.printf("  Types: %s (%d units), %s (%d units)\n",
-                project.getType1(), project.getUnitsType1(),
-                project.getType2(), project.getUnitsType2());
+            System.out.printf("  2-Room Flats: %d, 3-Room Flats: %d\n",
+                project.getTwoRoomFlats(), project.getThreeRoomFlats());
             System.out.printf("  Application Period: %s to %s\n",
                 project.getOpeningDate(), project.getClosingDate());
         });
     }
+
+    // ... [rest of the methods remain unchanged]
 
     private void approveApplications() {
         System.out.println("\n=== Approve/Reject Applications ===");
@@ -497,6 +464,16 @@ public class HDBManagerUI {
         String newPassword = scanner.nextLine();
         manager.setPassword(newPassword);
         System.out.println("Password changed successfully.");
+    }
+
+    private Date parseDate(String dateStr) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return dateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            System.out.println("Invalid date format. Please use YYYY-MM-DD format.");
+            return null;
+        }
     }
 
     

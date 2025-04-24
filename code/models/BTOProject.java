@@ -9,31 +9,22 @@ import java.util.Map;
 public class BTOProject {
     private String name;
     private String neighborhood;
-    private String type1;     // E.g., "2-Room"
-    private int unitsType1;   // Number of units available for type1
-    private double priceType1;// Selling price for type1
-    private String type2;     // E.g., "3-Room"
-    private int unitsType2;   // Number of units available for type2
-    private double priceType2;// Selling price for type2
-    private Date openingDate; // Application opening date
-    private Date closingDate; // Application closing date
-    private String manager;   // Manager for the project
-    private int officerSlot;  // Number of officer slots available
+    private int twoRoomFlats;   // Number of 2-room flats
+    private int threeRoomFlats; // Number of 3-room flats
+    private Date openingDate;   // Application opening date
+    private Date closingDate;   // Application closing date
+    private String manager;     // Manager for the project
+    private int officerSlot;    // Number of officer slots available
     private List<String> officers; // List of officers assigned to the project
-
     private boolean visibility = true; // Default to visible
 
-    public BTOProject(String name, String neighborhood, String type1, int unitsType1, double priceType1,
-                      String type2, int unitsType2, double priceType2, Date openingDate, Date closingDate,
-                      String manager, int officerSlot, String[] officers) {
+    public BTOProject(String name, String neighborhood, int twoRoomFlats, int threeRoomFlats, 
+                     Date openingDate, Date closingDate, String manager, int officerSlot, 
+                     String[] officers) {
         this.name = name;
         this.neighborhood = neighborhood;
-        this.type1 = type1;
-        this.unitsType1 = unitsType1;
-        this.priceType1 = priceType1;
-        this.type2 = type2;
-        this.unitsType2 = unitsType2;
-        this.priceType2 = priceType2;
+        this.twoRoomFlats = twoRoomFlats;
+        this.threeRoomFlats = threeRoomFlats;
         this.openingDate = openingDate;
         this.closingDate = closingDate;
         this.manager = manager;
@@ -41,6 +32,7 @@ public class BTOProject {
         this.officers = List.of(officers); // Converts an array to a List
     }
 
+    // Getters and Setters
     public String getProjectName() {
         return name;
     }
@@ -53,52 +45,20 @@ public class BTOProject {
         return neighborhood;
     }
 
-    public String getType1() {
-        return type1;
+    public int getTwoRoomFlats() {
+        return twoRoomFlats;
     }
 
-    public void setType1(String type1) {
-        this.type1 = type1;
+    public void setTwoRoomFlats(int twoRoomFlats) {
+        this.twoRoomFlats = twoRoomFlats;
     }
 
-    public int getUnitsType1() {
-        return unitsType1;
+    public int getThreeRoomFlats() {
+        return threeRoomFlats;
     }
 
-    public void setUnitsType1(int unitsType1) {
-        this.unitsType1 = unitsType1;
-    }
-
-    public double getPriceType1() {
-        return priceType1;
-    }
-
-    public void setPriceType1(double priceType1) {
-        this.priceType1 = priceType1;
-    }
-
-    public String getType2() {
-        return type2;
-    }
-
-    public void setType2(String type2) {
-        this.type2 = type2;
-    }
-
-    public int getUnitsType2() {
-        return unitsType2;
-    }
-
-    public void setUnitsType2(int unitsType2) {
-        this.unitsType2 = unitsType2;
-    }
-
-    public double getPriceType2() {
-        return priceType2;
-    }
-
-    public void setPriceType2(double priceType2) {
-        this.priceType2 = priceType2;
+    public void setThreeRoomFlats(int threeRoomFlats) {
+        this.threeRoomFlats = threeRoomFlats;
     }
 
     public Date getOpeningDate() {
@@ -150,13 +110,14 @@ public class BTOProject {
     }
 
     public int getAvailableFlats(FlatType flatType) {
-        String flatTypeStr = flatType.getDisplayName();
-        if (type1.equalsIgnoreCase(flatTypeStr)) {
-            return unitsType1;
-        } else if (type2.equalsIgnoreCase(flatTypeStr)) {
-            return unitsType2;
+        switch (flatType) {
+            case TWO_ROOM:
+                return twoRoomFlats;
+            case THREE_ROOM:
+                return threeRoomFlats;
+            default:
+                return 0;
         }
-        return 0;
     }
 
     public boolean overlaps(BTOProject otherProject) {
@@ -166,8 +127,8 @@ public class BTOProject {
 
     public Map<String, Integer> getFlatAvailability() {
         Map<String, Integer> availability = new HashMap<>();
-        availability.put(type1, unitsType1);
-        availability.put(type2, unitsType2);
+        availability.put("2-Room", twoRoomFlats);
+        availability.put("3-Room", threeRoomFlats);
         return availability;
     }
 
@@ -176,12 +137,8 @@ public class BTOProject {
         return "BTOProject{" +
                 "name='" + name + '\'' +
                 ", neighborhood='" + neighborhood + '\'' +
-                ", type1='" + type1 + '\'' +
-                ", unitsType1=" + unitsType1 +
-                ", priceType1=" + priceType1 +
-                ", type2='" + type2 + '\'' +
-                ", unitsType2=" + unitsType2 +
-                ", priceType2=" + priceType2 +
+                ", twoRoomFlats=" + twoRoomFlats +
+                ", threeRoomFlats=" + threeRoomFlats +
                 ", openingDate=" + openingDate +
                 ", closingDate=" + closingDate +
                 ", manager='" + manager + '\'' +
@@ -189,21 +146,5 @@ public class BTOProject {
                 ", officers=" + officers +
                 ", visibility=" + visibility +
                 '}';
-    }
-
-    public int getFlatType() {
-        if (type1.toLowerCase().contains("2") || type2.toLowerCase().contains("2")) {
-            return 2; // Represents "2-Room"
-        }
-        return 0; // Represents no "2-Room" type
-    }
-
-    public void setFlatType(int flatType) {
-        if (flatType == 2) {
-            this.type1 = "2-Room";
-            this.unitsType1 = 0; // Set to 0 for simplicity, adjust as needed
-        } else {
-            this.type1 = "Unknown"; // Default or error case
-        }
     }
 }

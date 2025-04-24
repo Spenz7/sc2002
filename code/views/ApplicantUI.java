@@ -399,11 +399,23 @@ public class ApplicantUI {
         }
     }
 
+    // private boolean isEligibleForProject(BTOProject project) {
+    //     if (applicant.getMaritalStatus().equals("Single")) {
+    //         return applicant.getAge() >= 35 && project.getFlatType() == 2;
+    //     } else if (applicant.getMaritalStatus().equals("Married")) {
+    //         return applicant.getAge() >= 21;
+    //     }
+    //     return false;
+    // }
+
     private boolean isEligibleForProject(BTOProject project) {
         if (applicant.getMaritalStatus().equals("Single")) {
-            return applicant.getAge() >= 35 && project.getFlatType() == 2;
+            // Single applicants must be >=35 and project must have 2-room flats available
+            return applicant.getAge() >= 35 && project.getTwoRoomFlats() > 0;
         } else if (applicant.getMaritalStatus().equals("Married")) {
-            return applicant.getAge() >= 21;
+            // Married applicants must be >=21 and project must have either flat type available
+            return applicant.getAge() >= 21 && 
+                   (project.getTwoRoomFlats() > 0 || project.getThreeRoomFlats() > 0);
         }
         return false;
     }
