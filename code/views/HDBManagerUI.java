@@ -51,7 +51,7 @@ public class HDBManagerUI {
             System.out.println("2. Edit Existing Project");
             System.out.println("3. Delete Project");
             System.out.println("4. Toggle Project Visibility");
-            System.out.println("5. Approve Officer Registrations");
+            System.out.println("5. Manage Officer Registrations");
             System.out.println("6. Approve Applications");
             System.out.println("7. Approve Withdrawal Requests");
             System.out.println("8. Generate Reports");
@@ -68,9 +68,9 @@ public class HDBManagerUI {
                 case 2 -> editProject();
                 case 3 -> deleteProject();
                 case 4 -> toggleProjectVisibility();
-                case 5 -> approveOfficerRegistrations();
+                case 5 -> manageOfficerRegistrations();
                 case 6 -> approveApplications();
-                case 7 -> approveWithdrawalRequests();
+                //case 7 -> approveWithdrawalRequests();
                 case 8 -> generateReports();
                 case 9 -> filterMyProjects();
                 case 10 -> changePassword(scanner);
@@ -424,9 +424,28 @@ public class HDBManagerUI {
     }
 
     
+//call managercontroller?
+    private void manageOfficerRegistrations() {
+        System.out.println("\nManager Dashboard:");
+        //print list of officer applications
+        System.out.println("1. Manage Officer Registrations");
+        System.out.println("2. Logout");
 
-    private void approveOfficerRegistrations() {
-        // Implementation for approving officer registrations
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline
+
+        switch (choice) {
+            case 1 -> {
+                System.out.print("Enter officer NRIC to handle registration: ");
+                String officerNric = scanner.nextLine();
+                System.out.print("Approve registration? (true/false): ");
+                boolean approve = scanner.nextBoolean();
+                scanner.nextLine(); // Consume the newline
+                managerController.handleOfficerRegistration(officerNric, approve);
+            }
+            case 2 -> System.out.println("Logging out...");
+            default -> System.out.println("Invalid option. Returning to dashboard.");
+        }
     }
 
     private void generateReports() {
