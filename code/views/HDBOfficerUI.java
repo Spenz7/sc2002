@@ -153,16 +153,51 @@ public class HDBOfficerUI {
     }
 
     private void processFlatBooking() {
-        System.out.println("Flat booking logic to be implemented...");
+        officer.processFlatBooking();
     }
 
     private void updateFlatAvailability() {
-        System.out.println("Flat availability update logic to be implemented...");
+        BTOProject assignedProject = officer.getAssignedProject();
+
+        if (assignedProject == null) {
+            System.out.println("You are not assigned to any project.");
+            return;
+        }
+
+        System.out.println("\nFlat Availability:");
+        assignedProject.getFlatAvailability().forEach((type, count) -> 
+                System.out.printf("%s: %d units remaining\n", type, count));
+
+        System.out.print("Enter flat type to update availability: ");
+        String flatType = scanner.nextLine().trim();
+
+        System.out.print("Enter new availability count: ");
+        int newCount = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        boolean success = projectController.updateFlatAvailability(assignedProject, flatType, newCount);
+        if (success) {
+            System.out.println("Flat availability updated successfully.");
+        } else {
+            System.out.println("Failed to update flat availability. Please try again.");
+        }
     }
 
+
     private void generateReceipt() {
-        System.out.println("Receipt generation logic to be implemented...");
+        System.out.print("Enter Applicant's NRIC for receipt generation: ");
+        String applicantNric = scanner.nextLine().trim();
+
+        String receipt = officer.generateReceipt(applicantNric); // Call the updated method
+        if (receipt.contains("--- Booking Receipt ---")) {
+            System.out.println(receipt);
+        } else {
+            System.out.println(receipt); // Display error message if receipt generation fails
+        }
     }
+
+
+
 
     private void changePassword(Scanner scanner) {
         System.out.print("Enter your new password: ");

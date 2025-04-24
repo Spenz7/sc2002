@@ -73,4 +73,16 @@ public class ProjectController {
     public boolean deleteProject(String projectName) {
         return projects.removeIf(project -> project.getProjectName().equalsIgnoreCase(projectName));
     }
+
+    public boolean updateFlatAvailability(BTOProject project, String flatType, int newCount) {
+        // Update the flat availability in the project
+        if (project.getFlatAvailability().containsKey(flatType)) {
+            project.getFlatAvailability().put(flatType, newCount);
+            return true; // Indicate success
+        } else {
+            System.out.println("Invalid flat type: " + flatType);
+            return false; // Indicate failure
+        }
+    }
+
 }

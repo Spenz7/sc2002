@@ -195,47 +195,58 @@ public class HDBOfficer {
     }
 
     // Option 7: Generate Receipt
-    public void generateReceipt() {
+    public String generateReceipt(String applicantNric) {
         if (assignedProject == null) {
-            System.out.println("You are not assigned to any project.");
-            return;
+            return "You are not assigned to any project.";
         }
 
-        System.out.print("Enter Applicant's NRIC to generate receipt: ");
-        String applicantNric = scanner.nextLine().trim();
-
+        // Retrieve applicant details using DataLoader
         String applicantName = DataLoader.getApplicantName(applicantNric);
         int applicantAge = DataLoader.getApplicantAge(applicantNric);
         String maritalStatus = DataLoader.getApplicantMaritalStatus(applicantNric);
         String bookedFlatType = DataLoader.getApplicantBookedFlatType(applicantNric);
 
-        if (bookedFlatType == null || bookedFlatType.isEmpty()) {
-            System.out.println("No booking found for applicant " + applicantNric);
-            return;
+        // Verify that applicant details were successfully retrieved
+        if (applicantName == null || maritalStatus == null || bookedFlatType == null || bookedFlatType.isEmpty()) {
+            return "No valid booking found for applicant NRIC: " + applicantNric;
         }
 
-        double unitPrice = 0;
+        // Determine the price based on the booked flat type
+        double unitPrice;
         if (bookedFlatType.equalsIgnoreCase(assignedProject.getType1())) {
             unitPrice = assignedProject.getPriceType1();
         } else if (bookedFlatType.equalsIgnoreCase(assignedProject.getType2())) {
             unitPrice = assignedProject.getPriceType2();
         } else {
-            System.out.println("Booked flat type does not match project details.");
-            return;
+            return "Booked flat type does not match project details.";
         }
 
+        // Calculate the total cost (simple implementation for now)
         double totalCost = unitPrice;
 
-        System.out.println("\n--- Booking Receipt ---");
-        System.out.println("Applicant Name   : " + applicantName);
-        System.out.println("NRIC             : " + applicantNric);
-        System.out.println("Age              : " + applicantAge);
-        System.out.println("Marital Status   : " + maritalStatus);
-        System.out.println("Project          : " + assignedProject.getProjectName());
-        System.out.println("Neighborhood     : " + assignedProject.getNeighborhood());
-        System.out.println("Booked Flat Type : " + bookedFlatType);
-        System.out.println("Unit Price       : $" + unitPrice);
-        System.out.println("Total Cost       : $" + totalCost);
-        System.out.println("-------------------------");
+        // Generate the receipt
+        return String.format(
+                "\n--- Booking Receipt ---\n" +
+                "Applicant Name   : %s\n" +
+                "NRIC             : %s\n" +
+                "Age              : %s\n" +
+                "Marital Status   : %s\n" +
+                "Project          : %s\n" +
+                "Neighborhood     : %s\n" +
+                "Booked Flat Type : %s\n" +
+                "Unit Price       : $%.2f\n" +
+                "Total Cost       : $%.2f\n" +
+                "-------------------------\n",
+                applicantName.isEmpty() ? "Unknown" : applicantName,
+                applicantNric,
+                applicantAge == -1 ? "Unknown" : applicantAge,
+                maritalStatus.isEmpty() ? "Unknown" : maritalStatus,
+                assignedProject.getProjectName(),
+                assignedProject.getNeighborhood(),
+                bookedFlatType,
+                unitPrice,
+                totalCost
+        );
     }
+
 }
