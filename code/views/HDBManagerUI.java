@@ -8,6 +8,10 @@ import models.enums.ApplicationStatus;
 import models.Application;
 import models.BTOProject;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -423,29 +427,65 @@ public class HDBManagerUI {
         }
     }
 
-    
-//call managercontroller?
     private void manageOfficerRegistrations() {
-        System.out.println("\nManager Dashboard:");
-        //print list of officer applications
-        System.out.println("1. Manage Officer Registrations");
-        System.out.println("2. Logout");
+    System.out.println("\nManager Dashboard:");
+    
+    // Display all officer registrations from specified file path
+    String filePath = "code/data/OfficerRegistrations.csv"; 
+    displayAllOfficerRegistrations(filePath);
+    
+    System.out.println("1. Manage Officer Registrations");
+    System.out.println("2. Logout");
 
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline
+    int choice = scanner.nextInt();
+    scanner.nextLine(); // Consume the newline
 
-        switch (choice) {
-            case 1 -> {
-                System.out.print("Enter officer NRIC to handle registration: ");
-                String officerNric = scanner.nextLine();
-                System.out.print("Approve registration? (true/false): ");
-                boolean approve = scanner.nextBoolean();
-                scanner.nextLine(); // Consume the newline
-                managerController.handleOfficerRegistration(officerNric, approve);
-            }
-            case 2 -> System.out.println("Logging out...");
-            default -> System.out.println("Invalid option. Returning to dashboard.");
+    switch (choice) {
+        case 1 -> {
+            System.out.print("Enter officer NRIC to handle registration: ");
+            String officerNric = scanner.nextLine();
+            System.out.print("Approve registration? (true/false): ");
+            boolean approve = scanner.nextBoolean();
+            scanner.nextLine(); // Consume the newline
+            managerController.handleOfficerRegistration(officerNric, approve);
         }
+        case 2 -> System.out.println("Logging out...");
+        default -> System.out.println("Invalid option. Returning to dashboard.");
+    }
+}
+
+    private void displayAllOfficerRegistrations(String filePath) {
+        System.out.println("\nAll Officer Registrations:");
+        System.out.println("-------------------------");
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            boolean hasRecords = false;
+            
+            // Print header
+            System.out.printf("%-12s %-20s %-10s%n", "NRIC", "Name", "Status");
+            System.out.println("----------------------------------------");
+            
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                if (values.length >= 3) {
+                    hasRecords = true;
+                    System.out.printf("%-12s %-20s %-10s%n", 
+                        values[0], values[1], values[2]);
+                }
+            }
+            
+            if (!hasRecords) {
+                System.out.println("No officer registrations found.");
+            }
+            
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: Registration file not found at " + filePath);
+        } catch (IOException e) {
+            System.out.println("Error reading officer registrations: " + e.getMessage());
+        }
+        
+        System.out.println(); // Add empty line for better formatting
     }
 
     private void generateReports() {
