@@ -106,18 +106,7 @@ public class Applicant extends HDBCustomer {
     public Applicant(String name, String nric, int age, String maritalStatus, String password) {
         super(name, nric, age, maritalStatus, password);
     }
-
-    // Implement required abstract methods (simplified for your UI)
-    @Override
-    public void displayDashboard() {
-        // Empty or basic implementation since UI handles display
-    }
-
-    @Override
-    public void performDuties() {
-        // Empty implementation since UI handles workflow
-    }
-
+    
     // Applicant-specific business logic methods
     public boolean isValidNric() {
         String nricRegex = "^[STFG]\\d{7}[A-Z]$";
