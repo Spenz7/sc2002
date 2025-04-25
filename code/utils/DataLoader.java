@@ -221,7 +221,7 @@ public class DataLoader {
 
     // Retrieve applicant's booked flat type
     public static String getApplicantBookedFlatType(String applicantNric) {
-        String filePath = "data/Applicants.csv"; // Adjust file path as needed
+        String filePath = "code/data/Applicants.csv"; // Adjust file path as needed
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -239,7 +239,7 @@ public class DataLoader {
 
     // Save officer registration to CSV
     public static void saveOfficerRegistration(String officerNric, String projectName, String status) throws IOException {
-        String filePath = "data/OfficerRegistrations.csv"; // Adjust the file path as needed
+        String filePath = "code/data/OfficerRegistrations.csv"; // Adjust the file path as needed
         List<String> lines = new ArrayList<>();
 
         // Read existing entries to check for duplicates
@@ -269,7 +269,7 @@ public class DataLoader {
     }
 
     public static void updateOfficerRegistrationStatus(String officerNric, String status) throws IOException {
-        String filePath = "data/OfficerRegistrations.csv";
+        String filePath = "code/data/OfficerRegistrations.csv";
         List<String> lines = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -292,7 +292,7 @@ public class DataLoader {
     }
 
     public static String getOfficerRegistrationStatus(String officerNric) throws IOException {
-        String filePath = "data/OfficerRegistrations.csv";
+        String filePath = "code/data/OfficerRegistrations.csv";
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {

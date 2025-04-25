@@ -3,62 +3,20 @@ package models;
 import models.enums.RegistrationStatus;
 import utils.DataLoader;
 import java.util.Scanner;
-
 import java.io.IOException;
 import java.util.InputMismatchException;
 
-public class HDBOfficer {
-    private String name;
-    private String nric;
-    private int age;
-    private String maritalStatus;
-    private String password;
-    private RegistrationStatus registrationStatus;
+public class HDBOfficer extends HDBCustomer {
     private BTOProject assignedProject;
-
-    private final Scanner scanner = new Scanner(System.in);
+    // Scanner is already inherited from HDBCustomer
 
     public HDBOfficer(String name, String nric, int age, String maritalStatus, String password) {
-        this.name = name;
-        this.nric = nric;
-        this.age = age;
-        this.maritalStatus = maritalStatus;
-        this.password = password;
-        this.registrationStatus = null; // Default to null
+        super(name, nric, age, maritalStatus, password);
         this.assignedProject = null; // Default to no project assigned
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getNric() {
-        return nric;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public String getMaritalStatus() {
-        return maritalStatus;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public RegistrationStatus getRegistrationStatus() {
-        return registrationStatus;
-    }
-
-    public void setRegistrationStatus(RegistrationStatus registrationStatus) {
-        this.registrationStatus = registrationStatus;
-    }
+    // Remove all getters/setters that are already in HDBCustomer
+    // Keep only officer-specific methods and fields
 
     public BTOProject getAssignedProject() {
         return assignedProject;
@@ -68,77 +26,125 @@ public class HDBOfficer {
         this.assignedProject = assignedProject;
     }
 
-    // Add this method to change the officer's password
-    public void changePassword(String newPassword) {
-        this.password = newPassword;
-    }
+    // Implement abstract methods from HDBCustomer
+    // @Override
+    // public void displayDashboard() {
+    //     System.out.println("\n=== HDB Officer Dashboard ===");
+    //     System.out.println("Name: " + getName());
+    //     System.out.println("NRIC: " + getNric());
+    //     if (assignedProject != null) {
+    //         System.out.println("Assigned Project: " + assignedProject.getProjectName());
+    //     } else {
+    //         System.out.println("Assigned Project: None");
+    //     }
+    //     System.out.println("=============================");
+    // }
 
-    // Add this method to check password
-    public boolean checkPassword(String inputPassword) {
-        return this.password.equals(inputPassword);
-    }
+    // @Override
+    // public void performDuties() {
+    //     Scanner scanner = new Scanner(System.in);
+    //     boolean exit = false;
+        
+    //     while (!exit) {
+    //         System.out.println("\nOfficer Duties Menu:");
+    //         System.out.println("1. Process Flat Booking");
+    //         System.out.println("2. Update Flat Availability");
+    //         System.out.println("3. Generate Receipt");
+    //         System.out.println("4. Return to Main Menu");
+    //         System.out.print("Enter your choice: ");
+            
+    //         try {
+    //             int choice = scanner.nextInt();
+    //             scanner.nextLine(); // Consume newline
+                
+    //             switch (choice) {
+    //                 case 1:
+    //                     processFlatBooking();
+    //                     break;
+    //                 case 2:
+    //                     updateFlatAvailability();
+    //                     break;
+    //                 case 3:
+    //                     System.out.print("Enter Applicant's NRIC: ");
+    //                     String nric = scanner.nextLine();
+    //                     System.out.println(generateReceipt(nric));
+    //                     break;
+    //                 case 4:
+    //                     exit = true;
+    //                     break;
+    //                 default:
+    //                     System.out.println("Invalid choice. Please try again.");
+    //             }
+    //         } catch (InputMismatchException e) {
+    //             System.out.println("Please enter a valid number.");
+    //             scanner.nextLine(); // Clear invalid input
+    //         }
+    //     }
+    // }
 
+    // Keep all the existing officer-specific methods (processFlatBooking, updateFlatAvailability, generateReceipt)
+    // These remain unchanged...
     public void processFlatBooking() {
-        // Check if the officer is assigned to a project
-        if (assignedProject == null) {
-            System.out.println("You are not assigned to any project.");
-            return;
-        }
-
-        // Collect the applicant's NRIC
-        System.out.print("Enter Applicant's NRIC for flat booking: ");
-        String applicantNric = scanner.nextLine().trim();
-
-        // Retrieve the applicant's application status
-        String applicationStatus = DataLoader.getApplicantApplicationStatus(applicantNric);
-        if (!"Successful".equalsIgnoreCase(applicationStatus)) {
-            System.out.println("Applicant's application is not successful. Cannot process booking.");
-            return;
-        }
-
-        if ("Booked".equalsIgnoreCase(applicationStatus)) {
-            System.out.println("Applicant has already booked a flat.");
-            return;
-        }
-
-        // Display available flat types
-        System.out.println("\nAvailable Flat Types:");
-        System.out.println("1. 2-Room (" + assignedProject.getTwoRoomFlats() + " units available)");
-        System.out.println("2. 3-Room (" + assignedProject.getThreeRoomFlats() + " units available)");
-
-        // Collect flat type choice
-        System.out.print("Enter flat type choice (1 for 2-Room, 2 for 3-Room): ");
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        String chosenFlatType;
-        if (choice == 1) {
-            chosenFlatType = "2-Room";
-            if (assignedProject.getTwoRoomFlats() <= 0) {
-                System.out.println("No available 2-Room units");
-                return;
-            }
-            assignedProject.setTwoRoomFlats(assignedProject.getTwoRoomFlats() - 1);
-        } else if (choice == 2) {
-            chosenFlatType = "3-Room";
-            if (assignedProject.getThreeRoomFlats() <= 0) {
-                System.out.println("No available 3-Room units");
-                return;
-            }
-            assignedProject.setThreeRoomFlats(assignedProject.getThreeRoomFlats() - 1);
-        } else {
-            System.out.println("Invalid choice. Booking aborted.");
-            return;
-        }
-
-        // Update applicant's booking details
-        boolean success = DataLoader.updateApplicantBooking(applicantNric, chosenFlatType, assignedProject.getProjectName());
-        if (success) {
-            System.out.println("Flat booking processed successfully. Applicant " + 
-                               applicantNric + " has booked a " + chosenFlatType + " unit.");
-        } else {
-            System.err.println("Failed to update applicant's booking.");
-        }
+                // Check if the officer is assigned to a project
+                if (assignedProject == null) {
+                    System.out.println("You are not assigned to any project.");
+                    return;
+                }
+        
+                // Collect the applicant's NRIC
+                System.out.print("Enter Applicant's NRIC for flat booking: ");
+                String applicantNric = scanner.nextLine().trim();
+        
+                // Retrieve the applicant's application status
+                String applicationStatus = DataLoader.getApplicantApplicationStatus(applicantNric);
+                if (!"Successful".equalsIgnoreCase(applicationStatus)) {
+                    System.out.println("Applicant's application is not successful. Cannot process booking.");
+                    return;
+                }
+        
+                if ("Booked".equalsIgnoreCase(applicationStatus)) {
+                    System.out.println("Applicant has already booked a flat.");
+                    return;
+                }
+        
+                // Display available flat types
+                System.out.println("\nAvailable Flat Types:");
+                System.out.println("1. 2-Room (" + assignedProject.getTwoRoomFlats() + " units available)");
+                System.out.println("2. 3-Room (" + assignedProject.getThreeRoomFlats() + " units available)");
+        
+                // Collect flat type choice
+                System.out.print("Enter flat type choice (1 for 2-Room, 2 for 3-Room): ");
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+        
+                String chosenFlatType;
+                if (choice == 1) {
+                    chosenFlatType = "2-Room";
+                    if (assignedProject.getTwoRoomFlats() <= 0) {
+                        System.out.println("No available 2-Room units");
+                        return;
+                    }
+                    assignedProject.setTwoRoomFlats(assignedProject.getTwoRoomFlats() - 1);
+                } else if (choice == 2) {
+                    chosenFlatType = "3-Room";
+                    if (assignedProject.getThreeRoomFlats() <= 0) {
+                        System.out.println("No available 3-Room units");
+                        return;
+                    }
+                    assignedProject.setThreeRoomFlats(assignedProject.getThreeRoomFlats() - 1);
+                } else {
+                    System.out.println("Invalid choice. Booking aborted.");
+                    return;
+                }
+        
+                // Update applicant's booking details
+                boolean success = DataLoader.updateApplicantBooking(applicantNric, chosenFlatType, assignedProject.getProjectName());
+                if (success) {
+                    System.out.println("Flat booking processed successfully. Applicant " + 
+                                       applicantNric + " has booked a " + chosenFlatType + " unit.");
+                } else {
+                    System.err.println("Failed to update applicant's booking.");
+                }
     }
 
     public void updateFlatAvailability() {
@@ -209,5 +215,6 @@ public class HDBOfficer {
                 assignedProject.getNeighborhood(),
                 bookedFlatType
         );
+        // Existing implementation...
     }
 }
