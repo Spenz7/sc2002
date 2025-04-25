@@ -428,5 +428,6 @@ public class ApplicantUI {
 
     private void manageEnquiries() {
         // Manage enquiries logic remains as per your friend's code
+        // find a backup
     }
 }

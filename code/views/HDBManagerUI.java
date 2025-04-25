@@ -346,7 +346,7 @@ public class HDBManagerUI {
         System.out.println("\nPending Applications:");
         for (int i = 0; i < pendingApplications.size(); i++) {
             Application app = pendingApplications.get(i);
-            System.out.printf("%d. Applicant: %s (NRIC: %s)\n", 
+            System.out.printf("%d. (NRIC: %s)\n", 
                 i + 1, 
                 //app.getApplicantName(), 
                 app.getApplicantNric());
